@@ -11,6 +11,8 @@ interface FolderCardProps {
   onMorePress?: () => void;
 }
 
+const hitSlopConfig = { top: 10, bottom: 10, left: 10, right: 10 };
+
 export const FolderCard: React.FC<FolderCardProps> = ({
   folder,
   onPress,
@@ -27,7 +29,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             <Text style={styles.title}>{folder.name}</Text>
             <Text style={styles.path}>{folder.path}</Text>
           </View>
-          <TouchableOpacity onPress={onMorePress} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <TouchableOpacity onPress={onMorePress} hitSlop={hitSlopConfig}>
             <Ionicons name="ellipsis-vertical" size={20} color={theme.colors.iconGray} />
           </TouchableOpacity>
         </View>
@@ -37,7 +39,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             <Text style={styles.statLabel}>STATUS</Text>
             <Text style={styles.statValue}>{folder.status === 'monitoring' ? 'Monitoring' : 'Idle'}</Text>
           </View>
-          <View style={[styles.stat, { marginLeft: theme.spacing.xl }]}>
+          <View style={[styles.stat, styles.statMargin]}>
             <Text style={styles.statLabel}>STORAGE</Text>
             <Text style={styles.statValue}>{folder.storageUsed}</Text>
           </View>
@@ -46,8 +48,8 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         {folder.lastSync && (
           <View style={styles.syncInfo}>
             <Ionicons name="time-outline" size={12} color={theme.colors.textTertiary} />
-            <Text style={[styles.syncText, { marginLeft: theme.spacing.xs }]}>Last sync {folder.lastSync}</Text>
-            <Ionicons name="cloud-done-outline" size={12} color={theme.colors.textTertiary} style={{ marginLeft: theme.spacing.xs }} />
+            <Text style={[styles.syncText, styles.syncTextMargin]}>Last sync {folder.lastSync}</Text>
+            <Ionicons name="cloud-done-outline" size={12} color={theme.colors.textTertiary} style={styles.syncIconMargin} />
           </View>
         )}
       </TouchableOpacity>
@@ -106,5 +108,14 @@ const styles = StyleSheet.create({
     ...theme.typography.caption,
     color: theme.colors.textTertiary,
     flex: 1,
+  },
+  statMargin: {
+    marginLeft: theme.spacing.xl,
+  },
+  syncTextMargin: {
+    marginLeft: theme.spacing.xs,
+  },
+  syncIconMargin: {
+    marginLeft: theme.spacing.xs,
   },
 });

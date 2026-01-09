@@ -53,7 +53,7 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
           <Ionicons name="chevron-back" size={24} color={theme.colors.iconDark} />
         </TouchableOpacity>
         <Text style={styles.title}>Conversion Settings</Text>
-        <View style={{ width: 24 }} />
+        <View style={styles.spacer} />
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -75,7 +75,7 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
           />
 
           <View style={styles.volumeContainer}>
-            <View style={{ flex: 1, marginRight: theme.spacing.sm }}>
+            <View style={styles.flexInput}>
               <Input
                 label="Starting Volume Number"
                 value={settings.startingVolumeNumber.toString()}
@@ -118,7 +118,7 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Output Destination</Text>
           
           <View style={styles.destinationContainer}>
-            <View style={{ flex: 1, marginRight: theme.spacing.md }}>
+            <View style={styles.flexDestinationLeft}>
               <TouchableOpacity
               style={[
                 styles.destinationCard,
@@ -139,7 +139,7 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            <View style={{ flex: 1 }}>
+            <View style={styles.flexDestination}>
               <TouchableOpacity
               style={[
                 styles.destinationCard,
@@ -272,5 +272,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: theme.spacing.sm,
     letterSpacing: 0.5,
+  },
+  spacer: {
+    width: 24,
+  },
+  flexInput: {
+    flex: 1,
+    marginRight: theme.spacing.sm,
+  },
+  flexDestinationLeft: {
+    flex: 1,
+    marginRight: theme.spacing.md,
+  },
+  flexDestination: {
+    flex: 1,
   },
 });

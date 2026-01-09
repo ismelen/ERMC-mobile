@@ -56,7 +56,7 @@ export const Button: React.FC<ButtonProps> = ({
         <ActivityIndicator color={variant === 'primary' ? theme.colors.white : theme.colors.primary} />
       ) : (
         <>
-          {icon && <View style={{ marginRight: theme.spacing.sm }}>{icon}</View>}
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
           <Text style={textStyle}>{title}</Text>
         </>
       )}
@@ -70,6 +70,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: theme.borderRadius.lg,
+  },
+  iconContainer: {
+    marginRight: theme.spacing.sm,
   },
   button_primary: {
     backgroundColor: theme.colors.primary,

@@ -2,10 +2,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import {
-    ConversionProgressScreen,
-    ConversionSettingsScreen,
-    ConverterDashboardScreen,
-    PendingFilesScreen,
+  ConversionProgressScreen,
+  ConversionSettingsScreen,
+  ConverterDashboardScreen,
+  PendingFilesScreen,
 } from '../screens';
 
 export type RootStackParamList = {
@@ -17,15 +17,17 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
+const screenOptions = {
+  headerShown: false,
+  cardStyle: { backgroundColor: '#F5F7FA' },
+};
+
 export const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="ConverterDashboard"
-        screenOptions={{
-          headerShown: false,
-          cardStyle: { backgroundColor: '#F5F7FA' },
-        }}
+        screenOptions={screenOptions}
       >
         <Stack.Screen
           name="ConverterDashboard"
