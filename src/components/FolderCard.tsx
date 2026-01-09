@@ -37,7 +37,7 @@ export const FolderCard: React.FC<FolderCardProps> = ({
             <Text style={styles.statLabel}>STATUS</Text>
             <Text style={styles.statValue}>{folder.status === 'monitoring' ? 'Monitoring' : 'Idle'}</Text>
           </View>
-          <View style={styles.stat}>
+          <View style={[styles.stat, { marginLeft: theme.spacing.xl }]}>
             <Text style={styles.statLabel}>STORAGE</Text>
             <Text style={styles.statValue}>{folder.storageUsed}</Text>
           </View>
@@ -46,8 +46,8 @@ export const FolderCard: React.FC<FolderCardProps> = ({
         {folder.lastSync && (
           <View style={styles.syncInfo}>
             <Ionicons name="time-outline" size={12} color={theme.colors.textTertiary} />
-            <Text style={styles.syncText}>Last sync {folder.lastSync}</Text>
-            <Ionicons name="cloud-done-outline" size={12} color={theme.colors.textTertiary} />
+            <Text style={[styles.syncText, { marginLeft: theme.spacing.xs }]}>Last sync {folder.lastSync}</Text>
+            <Ionicons name="cloud-done-outline" size={12} color={theme.colors.textTertiary} style={{ marginLeft: theme.spacing.xs }} />
           </View>
         )}
       </TouchableOpacity>
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    gap: theme.spacing.xl,
   },
   stat: {
     flex: 1,
@@ -102,7 +101,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: theme.spacing.sm,
-    gap: theme.spacing.xs,
   },
   syncText: {
     ...theme.typography.caption,

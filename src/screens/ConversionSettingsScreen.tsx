@@ -2,12 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Button, Input, Switch } from '../components';
 import { theme } from '../theme';
@@ -75,16 +75,17 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
           />
 
           <View style={styles.volumeContainer}>
-            <Input
-              label="Starting Volume Number"
-              value={settings.startingVolumeNumber.toString()}
-              onChangeText={(text) =>
-                setSettings({ ...settings, startingVolumeNumber: parseInt(text) || 1 })
-              }
-              keyboardType="numeric"
-              placeholder="1"
-              containerStyle={styles.volumeInput}
-            />
+            <View style={{ flex: 1, marginRight: theme.spacing.sm }}>
+              <Input
+                label="Starting Volume Number"
+                value={settings.startingVolumeNumber.toString()}
+                onChangeText={(text) =>
+                  setSettings({ ...settings, startingVolumeNumber: parseInt(text) || 1 })
+                }
+                keyboardType="numeric"
+                placeholder="1"
+              />
+            </View>
             <TouchableOpacity style={styles.hashButton}>
               <Ionicons name="grid-outline" size={20} color={theme.colors.iconGray} />
             </TouchableOpacity>
@@ -117,11 +118,12 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Output Destination</Text>
           
           <View style={styles.destinationContainer}>
-            <TouchableOpacity
+            <View style={{ flex: 1, marginRight: theme.spacing.md }}>
+              <TouchableOpacity
               style={[
                 styles.destinationCard,
                 settings.outputDestination === 'googleDrive' && styles.destinationCardActive,
-              ]}
+              ].filter(Boolean)}
               onPress={() => handleDestinationSelect('googleDrive')}
               activeOpacity={0.7}
             >
@@ -134,13 +136,15 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
                   <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
                 </View>
               )}
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
 
-            <TouchableOpacity
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity
               style={[
                 styles.destinationCard,
                 settings.outputDestination === 'localStorage' && styles.destinationCardActive,
-              ]}
+              ].filter(Boolean)}
               onPress={() => handleDestinationSelect('localStorage')}
               activeOpacity={0.7}
             >
@@ -153,7 +157,8 @@ export const ConversionSettingsScreen: React.FC<Props> = ({ navigation }) => {
                   <Ionicons name="checkmark-circle" size={20} color={theme.colors.primary} />
                 </View>
               )}
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -209,7 +214,6 @@ const styles = StyleSheet.create({
   volumeContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: theme.spacing.sm,
   },
   volumeInput: {
     flex: 1,
@@ -227,7 +231,6 @@ const styles = StyleSheet.create({
   },
   destinationContainer: {
     flexDirection: 'row',
-    gap: theme.spacing.md,
   },
   destinationCard: {
     flex: 1,

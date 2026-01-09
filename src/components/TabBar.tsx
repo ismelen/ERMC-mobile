@@ -15,7 +15,7 @@ export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange, tabs }) 
       {tabs.map((tab) => (
         <TouchableOpacity
           key={tab.key}
-          style={[styles.tab, activeTab === tab.key && styles.tabActive]}
+          style={[styles.tab, activeTab === tab.key && styles.tabActive].filter(Boolean)}
           onPress={() => onTabChange(tab.key)}
           activeOpacity={0.7}
         >
@@ -23,7 +23,7 @@ export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange, tabs }) 
             style={[
               styles.tabText,
               activeTab === tab.key && styles.tabTextActive,
-            ]}
+            ].filter(Boolean)}
           >
             {tab.label}
           </Text>

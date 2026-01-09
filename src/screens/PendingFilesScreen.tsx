@@ -106,9 +106,9 @@ export const PendingFilesScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.subHeader}>
         <View style={styles.sourceType}>
           <Ionicons name="folder" size={16} color={theme.colors.textSecondary} />
-          <Text style={styles.sourceTypeText}>Watched Folders</Text>
-          <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} />
-          <Text style={styles.sourceTypeText}>Individual Files</Text>
+          <Text style={[styles.sourceTypeText, { marginLeft: theme.spacing.xs }]}>Watched Folders</Text>
+          <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} style={{ marginLeft: theme.spacing.xs }} />
+          <Text style={[styles.sourceTypeText, { marginLeft: theme.spacing.xs }]}>Individual Files</Text>
         </View>
       </View>
 
@@ -133,19 +133,21 @@ export const PendingFilesScreen: React.FC<Props> = ({ navigation }) => {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button
-          title="Add Files"
-          onPress={handleAddFiles}
-          variant="secondary"
-          icon={<Ionicons name="add" size={20} color={theme.colors.primary} />}
-          style={styles.addButton}
-        />
-        <Button
-          title={`Continue (${selectedFiles.size})`}
-          onPress={handleProceed}
-          disabled={selectedFiles.size === 0}
-          style={styles.continueButton}
-        />
+        <View style={{ flex: 1, marginRight: theme.spacing.md }}>
+          <Button
+            title="Add Files"
+            onPress={handleAddFiles}
+            variant="secondary"
+            icon={<Ionicons name="add" size={20} color={theme.colors.primary} />}
+          />
+        </View>
+        <View style={{ flex: 2 }}>
+          <Button
+            title={`Continue (${selectedFiles.size})`}
+            onPress={handleProceed}
+            disabled={selectedFiles.size === 0}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -182,7 +184,6 @@ const styles = StyleSheet.create({
   sourceType: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
   },
   sourceTypeText: {
     ...theme.typography.bodySmall,
@@ -213,7 +214,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    gap: theme.spacing.md,
     paddingHorizontal: theme.spacing.base,
     paddingVertical: theme.spacing.md,
     backgroundColor: theme.colors.white,

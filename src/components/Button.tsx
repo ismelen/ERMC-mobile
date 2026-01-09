@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TextStyle,
-    TouchableOpacity,
-    ViewStyle,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from 'react-native';
 import { theme } from '../theme';
 
@@ -30,20 +30,20 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   style,
 }) => {
-  const buttonStyle: ViewStyle[] = [
+  const buttonStyle = [
     styles.button,
     styles[`button_${variant}`],
     styles[`button_${size}`],
     disabled && styles.buttonDisabled,
     style,
-  ];
+  ].filter(Boolean);
 
-  const textStyle: TextStyle[] = [
+  const textStyle = [
     styles.text,
     styles[`text_${variant}`],
     styles[`text_${size}`],
     disabled && styles.textDisabled,
-  ];
+  ].filter(Boolean);
 
   return (
     <TouchableOpacity
@@ -56,7 +56,7 @@ export const Button: React.FC<ButtonProps> = ({
         <ActivityIndicator color={variant === 'primary' ? theme.colors.white : theme.colors.primary} />
       ) : (
         <>
-          {icon && icon}
+          {icon && <View style={{ marginRight: theme.spacing.sm }}>{icon}</View>}
           <Text style={textStyle}>{title}</Text>
         </>
       )}
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: theme.borderRadius.lg,
-    gap: theme.spacing.sm,
   },
   button_primary: {
     backgroundColor: theme.colors.primary,

@@ -2,12 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { TaskItem } from '../components';
 import { theme } from '../theme';
@@ -98,8 +98,8 @@ export const ConversionProgressScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.folderInfoContainer}>
         <View style={styles.folderInfo}>
           <Ionicons name="folder" size={16} color={theme.colors.primary} />
-          <Text style={styles.folderText}>Folder: watching source</Text>
-          <Text style={styles.folderPath}>C:/Downloads/ComicX</Text>
+          <Text style={[styles.folderText, { marginLeft: theme.spacing.xs }]}>Folder: watching source</Text>
+          <Text style={[styles.folderPath, { marginLeft: theme.spacing.xs }]}>C:/Downloads/ComicX</Text>
         </View>
       </View>
 
@@ -192,7 +192,6 @@ const styles = StyleSheet.create({
   folderInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
   },
   folderText: {
     ...theme.typography.bodySmall,

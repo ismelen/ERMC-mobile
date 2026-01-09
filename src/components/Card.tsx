@@ -10,7 +10,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, style, noPadding = false }) => {
   return (
-    <View style={[styles.card, noPadding && styles.noPadding, style]}>
+    <View style={[styles.card, noPadding && styles.noPadding, style].filter(Boolean)}>
       {children}
     </View>
   );
