@@ -1,5 +1,6 @@
+import { router } from 'expo-router';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import FolderCard from '../../../src/components/folder-card';
 import { useConversion } from '../../../src/hooks/useConversion';
@@ -9,6 +10,7 @@ import { AddFolderIcon } from '../../../src/theme/icons';
 export default function Folders() {
   const monitoredFolders = useConversion((s) => s.watchedFolders);
   const folders = useConversion((s) => s.folders);
+  const removeFolder = useConversion((s) => s.removeFolder);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, paddingTop: 15 }}>
@@ -55,18 +57,41 @@ export default function Folders() {
 
         {/** Monitored folders */}
         {monitoredFolders.map((e, idx) => (
-          <FolderCard key={idx} folder={e} onPress={() => {}} onDelete={() => {}} />
+          <FolderCard
+            key={idx}
+            folder={e}
+            onPress={() => {
+              router.push({
+                pathname: '/converter-page',
+              });
+            }}
+            onDelete={() => removeFolder(idx, true)}
+          />
         ))}
 
         {/** Rest folders */}
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 25 }}>Selected Folders</Text>
         {folders.map((e, idx) => (
-          <FolderCard key={idx} folder={e} onPress={() => {}} onDelete={() => {}} />
+          <FolderCard
+            key={idx}
+            folder={e}
+            onPress={() => {
+              router.push({
+                pathname: '/converter-page',
+                params: {
+                  data: JSON.stringify(folders[idx]),
+                  type: 'folder',
+                },
+              });
+            }}
+            onDelete={() => removeFolder(idx, false)}
+          />
         ))}
 
         <View style={{ height: 80 }} />
       </ScrollView>
-      <View
+      <Pressable
+        onPress={useConversion.getState().addFolder}
         style={{
           backgroundColor: theme.colors.primary,
           position: 'absolute',
@@ -90,7 +115,7 @@ export default function Folders() {
         >
           Add Folder
         </Text>
-      </View>
+      </Pressable>
     </GestureHandlerRootView>
   );
 }

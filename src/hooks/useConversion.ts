@@ -1,7 +1,8 @@
+import { pick, pickDirectory } from '@react-native-documents/picker';
 import { create } from 'zustand';
 import { FilesystemService } from '../services/filesystem-service';
 import { StorageService } from '../services/storage-service';
-import { ConversionSettings, ConversionTask, Folder } from '../types';
+import { ConversionSettings, ConversionTask, File, Folder } from '../types';
 
 const WATCHED_FOLDERS_KEY = 'watchedFolders';
 const USER_TOKEN_KEY = 'token';
@@ -17,19 +18,18 @@ interface State {
   loaded: boolean;
 
   syncWatchedFolder(idx: number): Promise<void>;
-
+  updateWatchedFolder(folder: Folder): void;
   addFolder(): Promise<void>;
   removeFolder(idx: number, watched: boolean): void;
 
   addFiles(): Promise<void>;
   removeFile(idx: number): void;
-
-  convertFolder(folder: Folder): Promise<void>;
-  convertFiles(): Promise<void>;
-
-  toggleFileSelect(idx: number): void;
+  toggleFileSelect(idx: number, value: boolean): void;
+  selectAllFiles(): void;
 
   init(): Promise<void>;
+
+  setSettings(settings: ConversionSettings): void;
 }
 
 export const useConversion = create<State>((set, get) => ({
@@ -62,10 +62,10 @@ export const useConversion = create<State>((set, get) => ({
     }
     settings.googleCloudUserToken = userToken;
 
-    watchedFolders?.forEach((e) => (e.synchronized = false));
+    (watchedFolders ?? []).forEach((e) => (e.synchronized = false));
 
     set({
-      watchedFolders,
+      watchedFolders: watchedFolders ?? [],
       settings,
       loaded: true,
     });
@@ -80,21 +80,75 @@ export const useConversion = create<State>((set, get) => ({
     folders[idx] = await FilesystemService.readDirectory(folders[idx]);
 
     set({
-      watchedFolders: folders,
+      watchedFolders: [...folders],
     });
   },
 
-  async addFolder() {},
+  async addFolder() {
+    try {
+      const result = await pickDirectory({ requestLongTermAccess: false });
+      const newFolder = await FilesystemService.getDirectoryData(result.uri);
 
-  removeFolder(idx: number, watched: boolean) {},
+      const folders = get().folders;
+      set({ folders: [...folders, newFolder] });
+    } catch {}
+  },
 
-  async addFiles() {},
+  removeFolder(idx: number, watched: boolean) {
+    if (watched) {
+      const folders = get().watchedFolders;
+      set({ watchedFolders: [...folders.filter((_, i) => i !== idx)] });
+      return;
+    }
+    const folders = get().folders;
+    set({ folders: [...folders.filter((_, i) => i !== idx)] });
+  },
 
-  removeFile(idx: number) {},
+  async addFiles() {
+    try {
+      const results = await pick({
+        mode: 'open',
+        allowMultiSelection: true,
+        requestLongTermAccess: false,
+      });
 
-  async convertFolder(folder: Folder) {},
+      const newFiles: File[] = [];
+      for (var file of results) {
+        newFiles.push({
+          name: file.name ?? '',
+          size: FilesystemService.formatBytes(file.size ?? 0),
+          selected: true,
+        });
+      }
+      newFiles.sort((a, b) =>
+        a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+      );
+      set((s) => ({ files: [...s.files, ...newFiles] }));
+    } catch {}
+  },
 
-  async convertFiles() {},
+  removeFile(idx: number) {
+    const files = get().files;
+    set({ files: [...files.filter((_, i) => i !== idx)] });
+  },
 
-  toggleFileSelect(idx: number) {},
+  toggleFileSelect(idx: number, value: boolean) {
+    const files = get().files;
+    files[idx].selected = value;
+
+    set({ files: [...files] });
+  },
+
+  selectAllFiles() {
+    const files = get().files;
+    files.forEach((e) => (e.selected = true));
+    set({ files: [...files] });
+  },
+
+  setSettings(settings: ConversionSettings) {
+    set({ settings: { ...settings } });
+    StorageService.SetAsync(SETTINGS_KEY, settings);
+  },
+
+  updateWatchedFolder(folder: Folder) {},
 }));

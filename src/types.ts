@@ -1,6 +1,6 @@
 export interface File {
   name: string;
-  size: number;
+  size: string;
   selected?: boolean;
 }
 
@@ -10,8 +10,11 @@ export interface Folder extends File {
   lastSync?: Date;
   synchronized: boolean;
   status: 'Pending' | 'Syncing...';
-  lastFileNames: string[];
-  pendingFileNames: string[];
+  lastFilesAmount: number;
+  pendingFilesAmount: number;
+  outputFilename?: string;
+  author?: string;
+  startingVolumeNumber?: number;
 }
 
 export interface ConversionSettings {
@@ -24,11 +27,15 @@ export interface ConversionSettings {
 }
 
 export interface ConversionTask {
-  title: string;
+  data: Folder | File[];
   progression: number;
-  isMulti: boolean;
+  delete: boolean;
+  merge: boolean;
   src?: string;
   status: 'Done' | 'Waiting' | 'Converting';
+  outputFilename?: string;
+  author?: string;
+  startingVolumeNumber?: number;
 }
 
 export interface StorageData {

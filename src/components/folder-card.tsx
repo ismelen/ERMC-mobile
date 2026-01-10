@@ -39,8 +39,13 @@ export default function FolderCard({ folder, onPress, onDelete }: Props) {
           <MonitorizedFolderIcon color={iconColor} size="35px" />
         </View>
         <View style={{ flex: 1, marginLeft: 10, justifyContent: 'center' }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 20, lineHeight: 24 }}>{folder.name}</Text>
-          <Text style={{ fontSize: 16, color: theme.colors.textMuted, lineHeight: 18 }}>
+          <Text numberOfLines={1} style={{ fontWeight: 'bold', fontSize: 20, lineHeight: 24 }}>
+            {folder.name}
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={{ fontSize: 16, color: theme.colors.textMuted, lineHeight: 18 }}
+          >
             {folder.path}
           </Text>
         </View>
@@ -56,10 +61,10 @@ export default function FolderCard({ folder, onPress, onDelete }: Props) {
       >
         <ExtraInfoCard
           label="STATUS"
-          text={`${folder.pendingFileNames.length} pending`}
+          text={`${folder.pendingFilesAmount} pending`}
           textColor={theme.colors.primary}
         />
-        <ExtraInfoCard label="STORAGE" text={`${folder.size} MB`} textColor="#000" />
+        <ExtraInfoCard label="STORAGE" text={folder.size} textColor="#000" />
       </View>
       <View style={{ backgroundColor: theme.colors.border, height: 1, marginTop: 12 }} />
 
