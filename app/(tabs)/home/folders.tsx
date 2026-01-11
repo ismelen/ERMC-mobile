@@ -6,11 +6,22 @@ import FolderCard from '../../../src/components/folder-card';
 import { useConversion } from '../../../src/hooks/useConversion';
 import { theme } from '../../../src/theme';
 import { AddFolderIcon } from '../../../src/theme/icons';
+import { Folder } from '../../../src/types';
 
 export default function Folders() {
-  const monitoredFolders = useConversion((s) => s.watchedFolders);
   const folders = useConversion((s) => s.folders);
   const removeFolder = useConversion((s) => s.removeFolder);
+  const toggleWatchFolder = useConversion((s) => s.toggleWatchFolder);
+
+  const watched: Folder[] = [];
+  const nonWatched: Folder[] = [];
+  folders.forEach((value) => {
+    if (value.watching) {
+      watched.push(value);
+      return;
+    }
+    nonWatched.push(value);
+  });
 
   return (
     <GestureHandlerRootView style={{ flex: 1, paddingTop: 15 }}>
@@ -20,7 +31,7 @@ export default function Folders() {
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Monitored Folders</Text>
             <Text style={{ fontSize: 14, color: theme.colors.textMuted }}>
-              Monitoring {monitoredFolders.length} locations
+              Monitoring {watched.length} locations
             </Text>
           </View>
           <View
@@ -56,7 +67,7 @@ export default function Folders() {
         </View>
 
         {/** Monitored folders */}
-        {monitoredFolders.map((e, idx) => (
+        {watched.map((e, idx) => (
           <FolderCard
             key={idx}
             folder={e}
@@ -66,13 +77,13 @@ export default function Folders() {
               });
             }}
             onDelete={() => removeFolder(idx, true)}
-            onToggleWatch={(value) => {}}
+            onToggleWatch={(value) => toggleWatchFolder(idx, true)}
           />
         ))}
 
         {/** Rest folders */}
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 25 }}>Selected Folders</Text>
-        {folders.map((e, idx) => (
+        {nonWatched.map((e, idx) => (
           <FolderCard
             key={idx}
             folder={e}
@@ -86,7 +97,7 @@ export default function Folders() {
               });
             }}
             onDelete={() => removeFolder(idx, false)}
-            onToggleWatch={(value) => {}}
+            onToggleWatch={(value) => toggleWatchFolder(idx, false)}
           />
         ))}
 

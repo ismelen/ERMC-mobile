@@ -9,7 +9,7 @@ const USER_TOKEN_KEY = 'token';
 const SETTINGS_KEY = 'settings';
 
 interface State {
-  watchedFolders: Folder[];
+  watchedAmount: number;
   folders: Folder[];
   files: File[];
   settings?: ConversionSettings;
@@ -20,7 +20,7 @@ interface State {
   syncWatchedFolder(idx: number): Promise<void>;
   addFolder(): Promise<void>;
   removeFolder(idx: number, watched: boolean): void;
-  toggleWatchFolder(idx: number, willBeWatched: boolean, isBeingWatched: boolean): void;
+  toggleWatchFolder(idx: number, isBeingWatched: boolean): void;
 
   addFiles(): Promise<void>;
   removeFile(idx: number): void;
@@ -38,7 +38,7 @@ export const useConversion = create<State>((set, get) => ({
   convertingQueue: [],
   files: [],
   folders: [],
-  watchedFolders: [],
+  watchedAmount: 0,
 
   async init() {
     if (this.loaded) return;
@@ -65,9 +65,10 @@ export const useConversion = create<State>((set, get) => ({
     (watchedFolders ?? []).forEach((e) => (e.synchronized = false));
 
     set({
-      watchedFolders: watchedFolders ?? [],
+      folders: watchedFolders ?? [],
       settings,
       loaded: true,
+      watchedAmount: watchedFolders?.length ?? 0,
     });
 
     watchedFolders?.forEach((_, idx) => {
@@ -76,11 +77,11 @@ export const useConversion = create<State>((set, get) => ({
   },
 
   async syncWatchedFolder(idx: number) {
-    const folders = get().watchedFolders;
+    const folders = get().folders;
     folders[idx] = await FilesystemService.readDirectory(folders[idx]);
 
     set({
-      watchedFolders: [...folders],
+      folders: [...folders],
     });
   },
 
@@ -95,15 +96,19 @@ export const useConversion = create<State>((set, get) => ({
   },
 
   removeFolder(idx: number, watched: boolean) {
-    if (watched) {
-      const folders = get().watchedFolders;
-      const newWatchedFolders = [...folders.filter((_, i) => i !== idx)];
-      set({ watchedFolders: newWatchedFolders });
-      StorageService.SetAsync(WATCHED_FOLDERS_KEY, newWatchedFolders);
-      return;
+    if (!watched) {
+      idx += get().watchedAmount;
     }
-    const folders = get().folders;
-    set({ folders: [...folders.filter((_, i) => i !== idx)] });
+
+    const folders = [...get().folders.filter((_, i) => i != idx)];
+    set({ folders: folders });
+    if (watched) {
+      set((s) => ({ watchedAmount: s.watchedAmount - 1 }));
+      StorageService.SetAsync(
+        WATCHED_FOLDERS_KEY,
+        folders.filter((e) => e.watching)
+      );
+    }
   },
 
   async addFiles() {
@@ -152,24 +157,34 @@ export const useConversion = create<State>((set, get) => ({
     StorageService.SetAsync(SETTINGS_KEY, settings);
   },
 
-  toggleWatchFolder(idx: number, willBeWatched: boolean, isBeingWatched: boolean) {
-    // const fromFolders = isBeingWatched ? get().watchedFolders : get().folders;
-    // const toFolders = willBeWatched ? get().watchedFolders : get().folders;
+  toggleWatchFolder(idx: number, isBeingWatched: boolean) {
+    let folders = get().folders;
+    const foldersCleaned = folders.filter((_, i) => i != idx);
+    let watchedAmount = get().watchedAmount;
 
-    // const folder = fromFolders[idx];
-    // folder.watching = willBeWatched;
+    if (isBeingWatched) {
+      const folder = folders[idx];
+      folder.watching = !isBeingWatched;
 
-    const watchedFolders = get().watchedFolders;
-    const folders = get().folders;
+      folders = [...foldersCleaned, folder];
+      watchedAmount--;
+    } else {
+      idx += get().watchedAmount;
+      const folder = folders[idx];
+      folder.watching = !isBeingWatched;
 
-    const folder = (isBeingWatched ? watchedFolders : folders)[idx];
-    folder.watching = willBeWatched;
+      folders = [folder, ...foldersCleaned];
+      watchedAmount++;
+    }
 
     set({
-      watchedFolders: watchedFolders,
       folders: folders,
+      watchedAmount: watchedAmount,
     });
-
-    // TODO: Merge watchedFolders & Folders, add WatchedFoldersAmount
+    
+    StorageService.SetAsync(
+      WATCHED_FOLDERS_KEY,
+      folders.filter((e) => e.watching)
+    );
   },
 }));
