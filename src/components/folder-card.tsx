@@ -1,16 +1,17 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { theme } from '../theme';
-import { DeleteIcon, MonitorizedFolderIcon } from '../theme/icons';
+import { DeleteIcon, EyeIcon, MonitorizedFolderIcon } from '../theme/icons';
 import { Folder } from '../types';
 
 interface Props {
   folder: Folder;
   onPress(): void;
   onDelete(): void;
+  onToggleWatch(value: boolean): void;
 }
 
-export default function FolderCard({ folder, onPress, onDelete }: Props) {
+export default function FolderCard({ folder, onPress, onDelete, onToggleWatch }: Props) {
   const iconColor = folder.watching ? theme.colors.primary : theme.colors.textMuted;
 
   return (
@@ -49,6 +50,12 @@ export default function FolderCard({ folder, onPress, onDelete }: Props) {
             {folder.path}
           </Text>
         </View>
+        <Pressable style={{ padding: 3 }} onPress={() => onToggleWatch(!folder.watching)}>
+          <EyeIcon
+            size="26px"
+            color={folder.watching ? theme.colors.primary : theme.colors.textGray}
+          />
+        </Pressable>
       </View>
 
       {/** Info */}

@@ -18,9 +18,9 @@ interface State {
   loaded: boolean;
 
   syncWatchedFolder(idx: number): Promise<void>;
-  updateWatchedFolder(folder: Folder): void;
   addFolder(): Promise<void>;
   removeFolder(idx: number, watched: boolean): void;
+  toggleWatchFolder(idx: number, willBeWatched: boolean, isBeingWatched: boolean): void;
 
   addFiles(): Promise<void>;
   removeFile(idx: number): void;
@@ -97,7 +97,9 @@ export const useConversion = create<State>((set, get) => ({
   removeFolder(idx: number, watched: boolean) {
     if (watched) {
       const folders = get().watchedFolders;
-      set({ watchedFolders: [...folders.filter((_, i) => i !== idx)] });
+      const newWatchedFolders = [...folders.filter((_, i) => i !== idx)];
+      set({ watchedFolders: newWatchedFolders });
+      StorageService.SetAsync(WATCHED_FOLDERS_KEY, newWatchedFolders);
       return;
     }
     const folders = get().folders;
@@ -150,5 +152,24 @@ export const useConversion = create<State>((set, get) => ({
     StorageService.SetAsync(SETTINGS_KEY, settings);
   },
 
-  updateWatchedFolder(folder: Folder) {},
+  toggleWatchFolder(idx: number, willBeWatched: boolean, isBeingWatched: boolean) {
+    // const fromFolders = isBeingWatched ? get().watchedFolders : get().folders;
+    // const toFolders = willBeWatched ? get().watchedFolders : get().folders;
+
+    // const folder = fromFolders[idx];
+    // folder.watching = willBeWatched;
+
+    const watchedFolders = get().watchedFolders;
+    const folders = get().folders;
+
+    const folder = (isBeingWatched ? watchedFolders : folders)[idx];
+    folder.watching = willBeWatched;
+
+    set({
+      watchedFolders: watchedFolders,
+      folders: folders,
+    });
+
+    // TODO: Merge watchedFolders & Folders, add WatchedFoldersAmount
+  },
 }));

@@ -66,6 +66,7 @@ export default function Folders() {
               });
             }}
             onDelete={() => removeFolder(idx, true)}
+            onToggleWatch={(value) => {}}
           />
         ))}
 
@@ -85,6 +86,7 @@ export default function Folders() {
               });
             }}
             onDelete={() => removeFolder(idx, false)}
+            onToggleWatch={(value) => {}}
           />
         ))}
 
