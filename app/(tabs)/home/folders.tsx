@@ -3,15 +3,18 @@ import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import FolderCard from '../../../src/components/folder-card';
-import { useConversion } from '../../../src/hooks/useConversion';
+import { useFolders } from '../../../src/hooks/useFolders';
 import { theme } from '../../../src/theme';
 import { AddFolderIcon } from '../../../src/theme/icons';
 import { Folder } from '../../../src/types';
 
 export default function Folders() {
-  const folders = useConversion((s) => s.folders);
-  const removeFolder = useConversion((s) => s.removeFolder);
-  const toggleWatchFolder = useConversion((s) => s.toggleWatchFolder);
+  const [folders, deleteFolder, addFolder, toggleFolderWatching] = useFolders((s) => [
+    s.folders,
+    s.deleteFolder,
+    s.addFolder,
+    s.toggleFolderWatching,
+  ]);
 
   const watched: Folder[] = [];
   const nonWatched: Folder[] = [];
@@ -76,8 +79,8 @@ export default function Folders() {
                 pathname: '/converter-page',
               });
             }}
-            onDelete={() => removeFolder(idx, true)}
-            onToggleWatch={(value) => toggleWatchFolder(idx, true)}
+            onDelete={() => deleteFolder(idx, true)}
+            onToggleWatch={() => toggleFolderWatching(idx, true)}
           />
         ))}
 
@@ -96,15 +99,15 @@ export default function Folders() {
                 },
               });
             }}
-            onDelete={() => removeFolder(idx, false)}
-            onToggleWatch={(value) => toggleWatchFolder(idx, false)}
+            onDelete={() => deleteFolder(idx, false)}
+            onToggleWatch={() => toggleFolderWatching(idx, false)}
           />
         ))}
 
         <View style={{ height: 80 }} />
       </ScrollView>
       <Pressable
-        onPress={useConversion.getState().addFolder}
+        onPress={addFolder}
         style={{
           backgroundColor: theme.colors.primary,
           position: 'absolute',

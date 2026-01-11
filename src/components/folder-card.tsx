@@ -8,7 +8,7 @@ interface Props {
   folder: Folder;
   onPress(): void;
   onDelete(): void;
-  onToggleWatch(value: boolean): void;
+  onToggleWatch(): void;
 }
 
 export default function FolderCard({ folder, onPress, onDelete, onToggleWatch }: Props) {
@@ -50,7 +50,7 @@ export default function FolderCard({ folder, onPress, onDelete, onToggleWatch }:
             {folder.path}
           </Text>
         </View>
-        <Pressable style={{ padding: 3 }} onPress={() => onToggleWatch(!folder.watching)}>
+        <Pressable style={{ padding: 3 }} onPress={onToggleWatch}>
           <EyeIcon
             size="26px"
             color={folder.watching ? theme.colors.primary : theme.colors.textGray}

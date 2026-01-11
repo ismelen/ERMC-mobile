@@ -3,16 +3,19 @@ import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
 import FileCard from '../../../src/components/file-card';
-import { useConversion } from '../../../src/hooks/useConversion';
+import { useFiles } from '../../../src/hooks/useFiles';
 import { theme } from '../../../src/theme';
 import { AddCircleIcon, CircleArrowRightIcon } from '../../../src/theme/icons';
 
 export default function Files() {
-  const files = useConversion((s) => s.files);
+  const [files, addFiles, deleteFile, toggleSelectFile, selectAllFiles] = useFiles((s) => [
+    s.files,
+    s.addFiles,
+    s.deleteFile,
+    s.toggleSelectFile,
+    s.selectAllFiles,
+  ]);
   const selectedFilesAmount = files.filter((e) => e.selected).length;
-  const removeFile = useConversion((s) => s.removeFile);
-  const toggleFileSelect = useConversion((s) => s.toggleFileSelect);
-  const selectAllFiles = useConversion((s) => s.selectAllFiles);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, paddingTop: 15 }}>
@@ -34,8 +37,8 @@ export default function Files() {
           <FileCard
             file={e}
             key={idx}
-            onToggleSelect={(value) => toggleFileSelect(idx, value)}
-            onDelete={() => removeFile(idx)}
+            onToggleSelect={(value) => toggleSelectFile(idx, value)}
+            onDelete={() => deleteFile(idx)}
           />
         ))}
 
@@ -51,7 +54,7 @@ export default function Files() {
         }}
       >
         <Pressable
-          onPress={useConversion.getState().addFiles}
+          onPress={addFiles}
           style={{
             backgroundColor: theme.colors.primary,
             borderRadius: 20,
