@@ -52,7 +52,7 @@ export class ConversionService {
         //   to: localUri,
         // });
 
-        const path = await copyToCache(file.path);
+        const path = await copyToCache(file.path, file.name);
 
         const form = new FormData();
         form.append('file', {

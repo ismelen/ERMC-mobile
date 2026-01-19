@@ -6,13 +6,14 @@ import android.os.FileUtils
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import org.apache.commons.io.FilenameUtils
+import expo.modules.kotlin.exception.Exceptions
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.UUID // Importación necesaria para el ID único
 
-class MyFileHandlerModule : Module() {
+class FileHandlerModule : Module() {
 
   // Función privada que asegura la existencia del directorio
   private fun ensureDirExists(dir: File): File {
