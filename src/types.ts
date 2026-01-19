@@ -1,12 +1,12 @@
 export interface File {
   name: string;
-  size: string;
   selected?: boolean;
+  path: string;
+  type?: string;
 }
 
 export interface Folder extends File {
   watching: boolean;
-  path: string;
   lastSync?: Date;
   synchronized: boolean;
   status: 'Pending' | 'Syncing...';

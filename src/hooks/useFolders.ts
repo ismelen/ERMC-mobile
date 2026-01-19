@@ -57,12 +57,17 @@ export const useFolders = create<State>((set, get) => ({
   async addFolder() {
     set({ isLoading: true });
     try {
-      const result = await pickDirectory({ requestLongTermAccess: false });
-      const newFolder = await FilesystemService.getDirectoryData(result.uri);
+      // const dir = await openDocumentTree(true);
+      const dir = await pickDirectory({
+        requestLongTermAccess: true,
+      });
+
+      const newFolder = await FilesystemService.getDirectoryData(dir.uri);
 
       const folders = get().folders;
       set({ folders: [...folders, newFolder] });
-    } catch {
+    } catch (e: any) {
+      console.warn(e as Error);
       alert('Shomething gone wrong!!');
     } finally {
       set({ isLoading: false });

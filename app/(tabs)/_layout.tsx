@@ -11,10 +11,11 @@ export default function RootLayout() {
       screenOptions={{
         sceneStyle: {
           backgroundColor: theme.colors.background,
+          paddingTop: insets.top,
         },
         headerTitleAlign: 'center',
         headerShadowVisible: false,
-        headerShown: true,
+        headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.iconDisabled,
         tabBarStyle: {

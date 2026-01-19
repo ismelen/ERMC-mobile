@@ -8,13 +8,11 @@ import { theme } from '../../../src/theme';
 import { AddCircleIcon, CircleArrowRightIcon } from '../../../src/theme/icons';
 
 export default function Files() {
-  const [files, addFiles, deleteFile, toggleSelectFile, selectAllFiles] = useFiles((s) => [
-    s.files,
-    s.addFiles,
-    s.deleteFile,
-    s.toggleSelectFile,
-    s.selectAllFiles,
-  ]);
+  const files = useFiles((s) => s.files);
+  const addFiles = useFiles((s) => s.addFiles);
+  const deleteFile = useFiles((s) => s.deleteFile);
+  const toggleSelectFile = useFiles((s) => s.toggleSelectFile);
+  const selectAllFiles = useFiles((s) => s.selectAllFiles);
   const selectedFilesAmount = files.filter((e) => e.selected).length;
 
   return (

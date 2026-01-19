@@ -9,12 +9,10 @@ import { AddFolderIcon } from '../../../src/theme/icons';
 import { Folder } from '../../../src/types';
 
 export default function Folders() {
-  const [folders, deleteFolder, addFolder, toggleFolderWatching] = useFolders((s) => [
-    s.folders,
-    s.deleteFolder,
-    s.addFolder,
-    s.toggleFolderWatching,
-  ]);
+  const folders = useFolders((s) => s.folders);
+  const deleteFolder = useFolders((s) => s.deleteFolder);
+  const addFolder = useFolders((s) => s.addFolder);
+  const toggleFolderWatching = useFolders((s) => s.toggleFolderWatching);
 
   const watched: Folder[] = [];
   const nonWatched: Folder[] = [];
@@ -77,6 +75,10 @@ export default function Folders() {
             onPress={() => {
               router.push({
                 pathname: '/converter-page',
+                params: {
+                  data: JSON.stringify(folders[idx]),
+                  type: 'folder',
+                },
               });
             }}
             onDelete={() => deleteFolder(idx, true)}

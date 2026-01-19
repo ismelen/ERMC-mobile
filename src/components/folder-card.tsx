@@ -71,7 +71,6 @@ export default function FolderCard({ folder, onPress, onDelete, onToggleWatch }:
           text={`${folder.pendingFilesAmount} pending`}
           textColor={theme.colors.primary}
         />
-        <ExtraInfoCard label="STORAGE" text={folder.size} textColor="#000" />
       </View>
       <View style={{ backgroundColor: theme.colors.border, height: 1, marginTop: 12 }} />
 
@@ -84,9 +83,6 @@ export default function FolderCard({ folder, onPress, onDelete, onToggleWatch }:
           paddingHorizontal: 3,
         }}
       >
-        <Text style={{ flex: 1, color: theme.colors.textMuted }}>
-          Last sync: {folder.lastSync?.toDateString()}
-        </Text>
         <Pressable onPress={onDelete} style={{ padding: 3 }}>
           <DeleteIcon color={theme.colors.textGray} size="24px" />
         </Pressable>

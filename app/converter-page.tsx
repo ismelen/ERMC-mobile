@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Pressable, Text, View } from 'react-native';
 import { ScrollView, Switch, TextInput } from 'react-native-gesture-handler';
 import { useConversion } from '../src/hooks/useConversion';
@@ -10,29 +10,33 @@ import { ConversionTask, File, Folder } from '../src/types';
 export default function ConverterPage() {
   const settings = useConversion((s) => s.settings);
   const setSettings = useConversion((s) => s.setSettings);
+  const startConversion = useConversion((s) => s.startConversion);
   const { data, type } = useLocalSearchParams();
 
-  const task: ConversionTask = {
+  const [task, setTask] = useState<ConversionTask>({
     merge: settings!.mergeInVolumes,
     delete: settings!.deleteSrcAfterUpload,
     progression: 0,
     status: 'Waiting',
     data: [],
-  };
+  });
 
   useEffect(() => {
     if (type === 'files') {
-      task.data = JSON.parse(data as string) as File[];
+      setTask((s) => ({
+        ...s,
+        data: JSON.parse(data as string) as File[],
+      }));
       return;
     }
-    if (type === 'folder') {
-      task.data = JSON.parse(data as string) as Folder;
-      task.author = task.data.author;
-      task.startingVolumeNumber = task.data.startingVolumeNumber;
-      task.outputFilename = task.data.outputFilename;
-      return;
-    }
-  });
+
+    const f = JSON.parse(data as string) as Folder;
+    setTask((s) => ({
+      ...s,
+      outputFilename: f.name,
+      data: f,
+    }));
+  }, []);
 
   return (
     <>
@@ -40,11 +44,11 @@ export default function ConverterPage() {
         options={{
           headerShown: true,
           title: 'Conversion Settings',
-          contentStyle: { backgroundColor: theme.colors.background, paddingHorizontal: 15 },
+          contentStyle: { backgroundColor: theme.colors.background },
         }}
       />
       <KeyboardAvoidingView behavior="position" style={{ flex: 1 }}>
-        <ScrollView>
+        <ScrollView style={{ paddingHorizontal: 15 }}>
           <Text style={{ fontWeight: 800, fontSize: 18, marginBottom: 15 }}>
             Processing options
           </Text>
@@ -81,7 +85,7 @@ export default function ConverterPage() {
               </Text>
               <StyledTextInput
                 value={task.outputFilename ?? ''}
-                onChange={(value) => (task.outputFilename = value)}
+                onChange={(value) => setTask((s) => ({ ...s, outputFilename: value }))}
               />
 
               <Text style={{ fontSize: 16, marginTop: 10, color: theme.colors.textMuted }}>
@@ -89,15 +93,17 @@ export default function ConverterPage() {
               </Text>
               <StyledTextInput
                 value={task.author ?? ''}
-                onChange={(value) => (task.author = value)}
+                onChange={(value) => setTask((s) => ({ ...s, author: value }))}
               />
 
               <Text style={{ fontSize: 16, marginTop: 10, color: theme.colors.textMuted }}>
                 Staring Volume Number
               </Text>
               <StyledTextInput
-                value={task.startingVolumeNumber ?? ''}
-                onChange={(value) => (task.startingVolumeNumber = Number(value))}
+                value={task.startingVolumeNumber ?? 0}
+                onChange={(value) =>
+                  setTask((s) => ({ ...s, startingVolumeNumber: Number(value) }))
+                }
               />
             </>
           )}
@@ -114,7 +120,7 @@ export default function ConverterPage() {
           />
 
           <Pressable
-            onPress={() => {}} // TODO: update folder data, save to local if watched, start conversion
+            onPress={() => startConversion(task)} // TODO: update folder data, save to local if watched, start conversion
             style={{
               backgroundColor: theme.colors.primary,
               borderRadius: 20,

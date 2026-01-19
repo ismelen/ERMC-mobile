@@ -1,32 +1,29 @@
-import { Directory } from 'expo-file-system';
+import * as FS from 'expo-file-system/legacy';
 import { Folder } from '../types';
 
 export class FilesystemService {
   static async readDirectory(folder: Folder): Promise<Folder> {
-    const dir = new Directory(folder.path);
+    const files = await FS.StorageAccessFramework.readDirectoryAsync(folder.path);
 
-    folder.size = this.formatBytes(dir.size ?? 0);
     folder.lastSync = new Date();
     folder.status = 'Pending';
     folder.synchronized = true;
-    folder.pendingFilesAmount = dir.list().length - folder.lastFilesAmount;
+    folder.pendingFilesAmount = files.length - folder.lastFilesAmount;
 
     return folder;
   }
 
-  static async getDirectoryData(uri: string): Promise<Folder> {
-    const dir = new Directory(uri);
-    const info = dir.info();
+  static async getDirectoryData(dir: string): Promise<Folder> {
+    const files = await FS.StorageAccessFramework.readDirectoryAsync(dir);
 
     const result: Folder = {
-      name: dir.name,
-      path: uri,
-      size: this.formatBytes(dir.size ?? 0),
+      name: decodeURIComponent(dir).split('/').pop() ?? 'Error',
+      path: dir,
       status: 'Pending',
       synchronized: true,
       watching: false,
       lastSync: new Date(),
-      pendingFilesAmount: info.files?.length ?? 0,
+      pendingFilesAmount: files?.length ?? 0,
       lastFilesAmount: 0,
     };
 

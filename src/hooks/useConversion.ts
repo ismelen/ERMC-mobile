@@ -1,6 +1,8 @@
 import { create } from 'zustand';
+import { ConversionService } from '../services/conversion-service';
 import { StorageService } from '../services/storage-service';
 import { ConversionSettings, ConversionTask } from '../types';
+import { useFolders } from './useFolders';
 
 const USER_TOKEN_KEY = 'token';
 const SETTINGS_KEY = 'settings';
@@ -14,6 +16,7 @@ interface State {
   init(): Promise<void>;
 
   setSettings(settings: ConversionSettings): void;
+  startConversion(task: ConversionTask): Promise<void>;
 }
 
 export const useConversion = create<State>((set, get) => ({
@@ -49,10 +52,16 @@ export const useConversion = create<State>((set, get) => ({
       settings,
       loaded: true,
     });
+
+    useFolders.getState().init();
   },
 
   setSettings(settings: ConversionSettings) {
     set({ settings: { ...settings } });
     StorageService.SetAsync(SETTINGS_KEY, settings);
+  },
+
+  async startConversion(task: ConversionTask) {
+    ConversionService.convert(task, get().settings!);
   },
 }));

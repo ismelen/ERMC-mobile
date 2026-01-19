@@ -1,6 +1,5 @@
-import { pick } from '@react-native-documents/picker';
+import { getDocumentAsync } from 'expo-document-picker';
 import { create } from 'zustand';
-import { FilesystemService } from '../services/filesystem-service';
 import { File } from '../types';
 
 interface State {
@@ -20,18 +19,20 @@ export const useFiles = create<State>((set, get) => ({
   async addFiles() {
     set({ isLoading: true });
     try {
-      const results = await pick({
-        mode: 'open',
-        allowMultiSelection: true,
-        requestLongTermAccess: false,
+      const result = await getDocumentAsync({
+        copyToCacheDirectory: false,
+        multiple: true,
       });
 
+      if (result.canceled) return;
+
       const newFiles: File[] = [];
-      for (var file of results) {
+      for (var file of result.assets) {
         newFiles.push({
           name: file.name ?? '',
-          size: FilesystemService.formatBytes(file.size ?? 0),
           selected: true,
+          path: file.uri,
+          type: file.mimeType ?? 'application/octet-stream',
         });
       }
       newFiles.sort((a, b) =>
