@@ -62,6 +62,10 @@ export const useFolders = create<State>((set, get) => ({
         requestLongTermAccess: true,
       });
 
+      // await FS.StorageAccessFramework.createFileAsync(dir.uri, 'dummy', 'text/plain').catch(
+      //   () => {}
+      // );
+
       const newFolder = await FilesystemService.getDirectoryData(dir.uri);
 
       const folders = get().folders;

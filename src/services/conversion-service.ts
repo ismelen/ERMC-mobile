@@ -28,8 +28,9 @@ export class ConversionService {
         const filesInfo = await listFiles(correctPath);
         files = filesInfo.map((e) => ({
           name: e.name,
-          type: e.type,
-          path: this.fixPath(path + `/${e.name}`),
+          type: e.mime,
+          // path: this.fixPath(path + `/${e.name}`),
+          path: e.uri,
           // path: e.uri,
         }));
       } else {
@@ -62,7 +63,7 @@ export class ConversionService {
         } as unknown as Blob);
 
         // console.log(file.path);
-        console.log(path);
+        console.log(path, file.name, file.type);
 
         const response = await fetch(
           `${process.env.EXPO_PUBLIC_CONVERTER_API_URL}/manga/upload/${id}`,

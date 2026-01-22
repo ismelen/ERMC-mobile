@@ -2,6 +2,7 @@ package com.tuapp.filehandler
 
 import android.net.Uri
 import android.os.Build
+import android.content.Intent
 import android.os.FileUtils
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
@@ -41,6 +42,15 @@ class FileHandlerModule : Module() {
     AsyncFunction("copyToCache") { documentUri: String, name: String ->
       val context = appContext.reactContext ?: throw Exceptions.AppContextLost()
       val uri = Uri.parse(documentUri)
+
+      try {
+        val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or 
+                       Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        context.contentResolver.takePersistableUriPermission(uri, takeFlags)
+      } catch (e: SecurityException) {
+        // Si ya tiene permisos o no se pueden tomar, continuar
+        android.util.Log.w("FileHandler", "Could not take persistable permissions: ${e.message}")
+      }
 
       val outputFilePath = generateOutputPath(
         context.cacheDir,
