@@ -1,17 +1,18 @@
 import { create } from 'zustand';
+import { AuthService } from '../services/auth-service';
 import { ConversionService } from '../services/conversion-service';
 import { StorageService } from '../services/storage-service';
 import { ConversionSettings, ConversionTask } from '../types';
 import { useFolders } from './useFolders';
 
-const USER_TOKEN_KEY = 'token';
-const SETTINGS_KEY = 'settings';
+export const SETTINGS_KEY = 'settings';
 
 interface State {
   settings?: ConversionSettings;
   convertingQueue: ConversionTask[];
   queue: ConversionTask[];
   loaded: boolean;
+  converter?: ConversionService;
 
   init(): Promise<void>;
 
@@ -28,29 +29,23 @@ export const useConversion = create<State>((set, get) => ({
   watchedAmount: 0,
 
   async init() {
-    if (this.loaded) return;
+    if (get().loaded) return;
 
-    let [userToken, settings] = await Promise.all([
-      StorageService.GetSecureAsync(USER_TOKEN_KEY),
-      StorageService.GetAsync<ConversionSettings>(SETTINGS_KEY),
-    ]);
+    let settings = await StorageService.GetAsync<ConversionSettings>(SETTINGS_KEY);
 
     if (!settings) {
       settings = {
-        mergeInVolumes: false,
-        deleteSrcAfterUpload: false,
+        merge: false,
+        delete: false,
         outputDestionation: 'local',
       } as ConversionSettings;
-      StorageService.SetAsync(SETTINGS_KEY, {
-        ...settings,
-        googleCloudUserToken: userToken,
-      });
+      StorageService.SetAsync(SETTINGS_KEY, settings);
     }
-    settings.googleCloudUserToken = userToken;
 
     set({
       settings,
       loaded: true,
+      converter: new ConversionService(new AuthService()),
     });
 
     useFolders.getState().init();
@@ -62,6 +57,6 @@ export const useConversion = create<State>((set, get) => ({
   },
 
   async startConversion(task: ConversionTask) {
-    ConversionService.convert(task, get().settings!);
+    get().converter?.convert(task, get().settings!);
   },
 }));

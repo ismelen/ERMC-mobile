@@ -45,4 +45,4 @@ yarn-error.*
 /modules/*/android/.gradle/
 /modules/*/package-lock.json
 /.vscode/
-
+google-services.json
