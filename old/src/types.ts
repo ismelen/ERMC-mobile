@@ -19,23 +19,20 @@ export interface Folder extends File {
 
 export interface ConversionSettings {
   outputPath?: string;
-  googleCloudFolderId?: string;
-  googleCloudUserToken?: string;
-  mergeInVolumes: boolean;
-  deleteSrcAfterUpload: boolean;
+  cloudFolder?: string;
+  merge: boolean;
+  delete: boolean;
   outputDestionation: 'drive' | 'local';
 }
 
 export interface ConversionTask {
   data: Folder | File[];
-  progression: number;
-  delete: boolean;
-  merge: boolean;
-  src?: string;
   status: 'Done' | 'Waiting' | 'Converting';
-  outputFilename?: string;
+  title?: string;
   author?: string;
-  startingVolumeNumber?: number;
+  firstVolumeNum?: number;
+  cloudToken?: string;
+  cloudFolder?: string;
 }
 
 export interface StorageData {

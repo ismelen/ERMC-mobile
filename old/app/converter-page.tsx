@@ -14,9 +14,6 @@ export default function ConverterPage() {
   const { data, type } = useLocalSearchParams();
 
   const [task, setTask] = useState<ConversionTask>({
-    merge: settings!.mergeInVolumes,
-    delete: settings!.deleteSrcAfterUpload,
-    progression: 0,
     status: 'Waiting',
     data: [],
   });
@@ -33,7 +30,7 @@ export default function ConverterPage() {
     const f = JSON.parse(data as string) as Folder;
     setTask((s) => ({
       ...s,
-      outputFilename: f.name,
+      title: f.name,
       data: f,
     }));
   }, []);
@@ -57,9 +54,9 @@ export default function ConverterPage() {
               title="Merge into volumes"
               description="Combines multiple CBZ files into EPUB volumes"
               borderRadius="top"
-              enabled={settings!.mergeInVolumes}
+              enabled={settings!.merge}
               toggleValue={(value) => {
-                settings!.mergeInVolumes = value;
+                settings!.merge = value;
                 setSettings(settings!);
               }}
             />
@@ -67,14 +64,14 @@ export default function ConverterPage() {
               title="Delete local source after upload"
               description="Save device space after cloud sync"
               borderRadius="bottom"
-              enabled={settings!.deleteSrcAfterUpload}
+              enabled={settings!.delete}
               toggleValue={(value) => {
-                settings!.deleteSrcAfterUpload = value;
+                settings!.delete = value;
                 setSettings(settings!);
               }}
             />
           </View>
-          {settings!.mergeInVolumes && (
+          {settings!.merge && (
             <>
               <Text style={{ fontWeight: 800, fontSize: 18, marginBottom: 5, marginTop: 30 }}>
                 Metadata
@@ -84,8 +81,8 @@ export default function ConverterPage() {
                 Output Filename
               </Text>
               <StyledTextInput
-                value={task.outputFilename ?? ''}
-                onChange={(value) => setTask((s) => ({ ...s, outputFilename: value }))}
+                value={task.title ?? ''}
+                onChange={(value) => setTask((s) => ({ ...s, title: value }))}
               />
 
               <Text style={{ fontSize: 16, marginTop: 10, color: theme.colors.textMuted }}>
@@ -100,10 +97,8 @@ export default function ConverterPage() {
                 Staring Volume Number
               </Text>
               <StyledTextInput
-                value={task.startingVolumeNumber ?? 0}
-                onChange={(value) =>
-                  setTask((s) => ({ ...s, startingVolumeNumber: Number(value) }))
-                }
+                value={task.firstVolumeNum ?? 0}
+                onChange={(value) => setTask((s) => ({ ...s, firstVolumeNum: Number(value) }))}
               />
             </>
           )}
