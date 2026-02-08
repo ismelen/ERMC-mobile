@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { colors } from '../../theme/colors';
 import ChevronRightIcon from '../icons/chevron-right-icon';
 import SText from '../shared/SText';
@@ -14,20 +14,27 @@ export default function ActionButton({ onPress, text, icon }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      style={{ backgroundColor: colors.card, borderRadius: 14, padding: 14 }}
+      style={{
+        backgroundColor: colors.card,
+        borderRadius: 14,
+        padding: 14,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+      }}
     >
       {icon('30px', colors.onCard)}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <SText
-          style={{
-            fontSize: 18,
-            marginTop: 10,
-          }}
-        >
-          {text}
-        </SText>
-        <ChevronRightIcon size="30px" color={colors.primary} />
-      </View>
+      {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}> */}
+      <SText
+        style={{
+          fontSize: 18,
+          flex: 1,
+        }}
+      >
+        {text}
+      </SText>
+      <ChevronRightIcon size="30px" color={colors.primary} />
+      {/* </View> */}
     </Pressable>
   );
 }

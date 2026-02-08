@@ -15,13 +15,13 @@ export default function MonitoredFolderCard({ folder, onPress }: Props) {
       <OpenFolderIcon size="20px" color={colors.onCard} />
       <SText style={{ flex: 1 }}>{folder.source.name}</SText>
       <View style={[styles.folder, { gap: 8 }]}>
-        {folder.pendingPaths.length !== 0 && <View style={styles.dot} />}
+        {folder.source.children?.length !== 0 && <View style={styles.dot} />}
         <SText
           style={{
-            color: folder.pendingPaths.length === 0 ? colors.onCard : colors.primary,
+            color: folder.source.children?.length === 0 ? colors.onCard : colors.primary,
           }}
         >
-          {folder.pendingPaths.length} new
+          {folder.source.children?.length} new
         </SText>
       </View>
     </Pressable>

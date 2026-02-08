@@ -1,14 +1,19 @@
 import React, { ReactNode } from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { colors } from '../../theme/colors';
 
 interface Props {
   style?: StyleProp<ViewStyle>;
   children: ReactNode;
+  onPress?(): void;
 }
 
-export default function SButton({ children, style }: Props) {
-  return <View style={[styles.button, style]}>{children}</View>;
+export default function SButton({ children, style, onPress }: Props) {
+  return (
+    <Pressable onPress={onPress} style={[styles.button, style]}>
+      {children}
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({

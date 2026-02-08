@@ -1,16 +1,45 @@
+import { pickDirectory } from '@react-native-documents/picker';
+import { getDocumentAsync } from 'expo-document-picker';
 import * as FS from 'expo-file-system/legacy';
 import { Source } from '../models/source';
 
 export class FilesystemService {
-  static async getMonitorizedFolder(dir: string): Promise<[Source, string[]]> {
+  static async getMonitorizedFolder(dir: string): Promise<Source> {
     const files = await FS.StorageAccessFramework.readDirectoryAsync(dir);
 
-    const source: Source = {
+    return {
       name: decodeURIComponent(dir).split('/').pop() ?? 'ERROR',
       path: dir,
+      children: files,
     };
+  }
 
-    return [source, files];
+  static async pickFolder(): Promise<Source | undefined> {
+    const dir = await pickDirectory({
+      requestLongTermAccess: true,
+    });
+    if (dir.bookmarkStatus !== 'success') return;
+
+    return this.getMonitorizedFolder(dir.uri);
+  }
+
+  static async pickFiles(): Promise<Source[]> {
+    const result = await getDocumentAsync({
+      copyToCacheDirectory: false,
+      multiple: true,
+    });
+    if (result.canceled) return [];
+
+    const srcs: Source[] = [];
+    for (var file of result.assets) {
+      srcs.push({
+        name: file.name,
+        path: file.uri,
+        // size: file.size
+      });
+    }
+
+    return srcs;
   }
   // static async readDirectory(folder: Source): Promise<Source> {
   //   const files = await FS.StorageAccessFramework.readDirectoryAsync(folder.path);

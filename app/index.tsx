@@ -1,5 +1,5 @@
-import { pickDirectory } from '@react-native-documents/picker';
-import React, { useEffect, useState } from 'react';
+import { router, Stack } from 'expo-router';
+import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { AddCircleIcon } from '../old/src/theme/icons';
 import ActionButton from '../src/components/dashboard/action-button';
@@ -9,49 +9,29 @@ import ImageIcon from '../src/components/icons/image-icon';
 import SColumn from '../src/components/shared/SColumn';
 import SDivider from '../src/components/shared/SDivider';
 import SText from '../src/components/shared/SText';
-import { MonitoredFolder } from '../src/models/monitored-folder';
-import { UploadSettings } from '../src/models/upload';
-import { FilesystemService } from '../src/services/filesystem-service';
-import { StorageService } from '../src/services/storage-service';
+import { useMonitoredFolders } from '../src/hooks/use-monitored-folders';
 import { colors } from '../src/theme/colors';
 
-const FOLDERS = 'folders_key';
-
 export default function index() {
-  const [folders, setFolders] = useState<MonitoredFolder[]>([]);
-
-  const fetchMonitoredFolders = async () => {
-    const monitoredFolders = await StorageService.GetAsync<MonitoredFolder[]>(FOLDERS);
-    if (!monitoredFolders) return;
-
-    setFolders(monitoredFolders);
-  };
+  const fetchMonitoredFolders = useMonitoredFolders((s) => s.fetchMonitoredFolders);
+  const folders = useMonitoredFolders((s) => s.folders);
+  const addFolder = useMonitoredFolders((s) => s.addFolder);
 
   useEffect(() => {
     fetchMonitoredFolders();
   }, []);
 
-  const addFolderHanlder = async () => {
-    const dir = await pickDirectory({
-      requestLongTermAccess: true,
-    });
-    const [folder, pendingFiles] = await FilesystemService.getMonitorizedFolder(dir.uri);
-    const settings = await UploadSettings.default(folder.name, '');
-    const newFolders = [
-      ...folders,
-      {
-        source: folder,
-        pendingPaths: pendingFiles,
-        autoUpload: false,
-        settings: settings,
-      },
-    ];
-    setFolders(newFolders);
-    StorageService.SetAsync(FOLDERS, newFolders);
-  };
-
   return (
     <View>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: colors.background,
+            paddingTop: 50,
+          },
+        }}
+      />
       <View style={[styles.padding]}>
         <SText style={[styles.title, { fontSize: 20 }]}>Dashboard</SText>
         <SText style={{ fontSize: 14, color: colors.onCard }}>CONVERSION HUB</SText>
@@ -61,12 +41,19 @@ export default function index() {
         <ActionButton
           text="Convert Manga to EPUB"
           icon={(size, color) => <ImageIcon size={size} color={color} />}
-          onPress={() => {}}
+          onPress={() =>
+            router.push({
+              pathname: '/convert-settings/[idx]',
+              params: {
+                idx: -1,
+              },
+            })
+          }
         />
         <ActionButton
-          text="Convert Manga to EPUB"
+          text="Kepubify"
           icon={(size, color) => <BookIcon size={size} color={color} />}
-          onPress={() => {}}
+          onPress={() => {}} //TODO: Kepubify
         />
         <View style={[styles.monitoredTitle]}>
           <SText style={[styles.title, { fontSize: 18 }]}>FOLDER MONITOR</SText>
@@ -75,7 +62,7 @@ export default function index() {
 
         <SColumn
           footer={
-            <Pressable style={[styles.addFolders]} onPress={addFolderHanlder}>
+            <Pressable style={[styles.addFolders]} onPress={addFolder}>
               <AddCircleIcon size="22px" color={colors.primary} />
               <SText style={{ color: colors.primary, fontWeight: '600', fontSize: 16 }}>
                 Add Folder
@@ -84,7 +71,18 @@ export default function index() {
           }
         >
           {folders.map((e, i) => (
-            <MonitoredFolderCard key={i} folder={e} onPress={() => {}} />
+            <MonitoredFolderCard
+              key={i}
+              folder={e}
+              onPress={() =>
+                router.push({
+                  pathname: '/convert-settings/[idx]',
+                  params: {
+                    idx: i,
+                  },
+                })
+              }
+            />
           ))}
         </SColumn>
       </View>

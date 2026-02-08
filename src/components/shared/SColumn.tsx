@@ -6,9 +6,10 @@ import SDivider from './SDivider';
 interface Props {
   children?: ReactNode;
   footer?: ReactNode;
+  removeCellPadding?: boolean;
 }
 
-export default function SColumn<T>({ children, footer }: Props) {
+export default function SColumn<T>({ children, footer, removeCellPadding }: Props) {
   const childrens = Children.toArray(children);
 
   return (
@@ -16,7 +17,7 @@ export default function SColumn<T>({ children, footer }: Props) {
       {childrens.map((e, i) => (
         <View key={i}>
           {i !== 0 && <SDivider />}
-          <Wrapper>{e}</Wrapper>
+          <Wrapper removeCellPadding={removeCellPadding}>{e}</Wrapper>
         </View>
       ))}
       {footer && childrens.length !== 0 && <SDivider />}
@@ -27,15 +28,18 @@ export default function SColumn<T>({ children, footer }: Props) {
 
 interface WrapperProps {
   children?: ReactNode;
+  removeCellPadding?: boolean;
 }
 
-function Wrapper({ children }: WrapperProps) {
+function Wrapper({ children, removeCellPadding }: WrapperProps) {
   return (
     <View
-      style={{
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-      }}
+      style={
+        !removeCellPadding && {
+          paddingHorizontal: 16,
+          paddingVertical: 14,
+        }
+      }
     >
       {children}
     </View>

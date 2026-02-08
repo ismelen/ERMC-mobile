@@ -1,4 +1,3 @@
-import { Cloud } from './cloud';
 import { Source } from './source';
 
 export interface Upload {
@@ -10,19 +9,22 @@ export class UploadSettings {
   constructor(
     public mergeFiles: boolean,
     public deleteFilesAfterUpload: boolean,
+    public autoUpload: boolean,
+    public cloud: boolean,
     public title?: string,
     public author?: string,
-    public initialVolume?: number,
-    public cloud?: Cloud
+    public initialVolume?: number
   ) {}
 
-  static async default(name: string, author: string): Promise<UploadSettings> {
+  static default(name: string, author: string): UploadSettings {
     return {
-      mergeFiles: false,
-      deleteFilesAfterUpload: false,
+      mergeFiles: true,
+      deleteFilesAfterUpload: true,
       title: name,
       author: author,
-      cloud: await Cloud.instance(),
+      cloud: false,
+      initialVolume: 1,
+      autoUpload: false,
     };
   }
 }
