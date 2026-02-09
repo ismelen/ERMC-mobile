@@ -9,7 +9,7 @@ import { MangaConvertService } from '../../../src/services/manga-convert-service
 
 export default function index() {
   const { idx } = useLocalSearchParams();
-  const updateFolderSettings = useMonitoredFolders((s) => s.updateFolderSettings);
+  const updateFolder = useMonitoredFolders((s) => s.updateFolder);
   const deleteFolder = useMonitoredFolders((s) => s.deleteFolder);
   const [loading, setLoading] = useState(false);
 
@@ -65,7 +65,17 @@ export default function index() {
         queue.sources = sources;
         if (isMonitored) {
           settings.initialVolume! += queue.times.length;
-          updateFolderSettings(settings, Number(idx));
+          updateFolder(
+            {
+              source: {
+                ...newSources[0],
+                children: [],
+              },
+              settings: settings,
+              uploaded: true,
+            },
+            Number(idx)
+          );
         }
 
         router.replace('/(tabs)/queue');
