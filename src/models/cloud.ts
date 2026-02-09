@@ -13,7 +13,7 @@ interface TokenData {
 export class Cloud {
   private static _instance?: Cloud;
 
-  constructor(
+  private constructor(
     public email?: string,
     public folderName?: string,
     private token?: TokenData,
@@ -46,7 +46,7 @@ export class Cloud {
 
   public async setAccount() {
     await this.requestToken();
-    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
+    StorageService.SetSecureAsync(CLOUD, JSON.stringify(this));
   }
 
   public async setFolder() {
@@ -60,7 +60,7 @@ export class Cloud {
     const values = await this.requestFolder();
     this.folderName = values?.name;
     this.folderId = values?.id;
-    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
+    StorageService.SetSecureAsync(CLOUD, JSON.stringify(this));
   }
 
   public async check(): Promise<boolean> {
@@ -70,7 +70,7 @@ export class Cloud {
     const folderUpdated = await this.updateFolderId();
     if (!folderUpdated) return false;
 
-    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
+    StorageService.SetSecureAsync(CLOUD, JSON.stringify(this));
     return true;
   }
 

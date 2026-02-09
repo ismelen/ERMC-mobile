@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     this.data = await this.requestToken();
-    await StorageService.SetSecureAsymc(TOKEN_KEY, JSON.stringify(this.data));
+    await StorageService.SetSecureAsync(TOKEN_KEY, JSON.stringify(this.data));
 
     return this.data?.token;
   }

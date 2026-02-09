@@ -24,8 +24,7 @@ export default function index() {
     settings = folder.settings;
   }
 
-  return <ConvertLoading />;
-  // if (loading) return <ConvertLoading />;
+  if (loading) return <ConvertLoading />;
 
   return (
     <ConvertSettingsPage
@@ -64,6 +63,10 @@ export default function index() {
         if (!queue) return;
 
         queue.sources = sources;
+        if (isMonitored) {
+          settings.initialVolume! += queue.times.length;
+          updateFolderSettings(settings, Number(idx));
+        }
 
         router.replace('/(tabs)/queue');
       }}

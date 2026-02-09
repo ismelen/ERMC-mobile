@@ -1,6 +1,7 @@
 import mime from 'mime';
 import { copyToCache } from '../../modules/file-handler';
 import { Cloud } from '../models/cloud';
+import { eReaderModel } from '../models/e-reader-model';
 import { Queue, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
 
@@ -27,7 +28,9 @@ export class MangaConvertService {
         } as unknown as Blob);
       }
 
-      form.append('profile', 'KoCC'); //TODO: request to user
+      const profile = await eReaderModel.instance();
+
+      form.append('profile', profile.getModel());
       form.append('format', 'epub');
       form.append('author', settings.author ?? '');
       form.append('title', settings.title ?? '');

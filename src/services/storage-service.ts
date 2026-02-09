@@ -8,7 +8,7 @@ export class StorageService {
     return result;
   }
 
-  static async SetSecureAsymc(key: string, value: string): Promise<void> {
+  static async SetSecureAsync(key: string, value: string): Promise<void> {
     await SecureStorage.setItemAsync(key, value);
   }
 

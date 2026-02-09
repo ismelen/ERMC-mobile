@@ -1,13 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { create } from 'zustand';
+import { colors } from '../../theme/colors';
+import ChevronRightIcon from '../icons/chevron-right-icon';
+import CloseIcon from '../icons/close-icon';
+import FolderIcon from '../icons/folder-icon';
+import SColumn from '../shared/SColumn';
+import SText from '../shared/SText';
 
 interface State {
   token?: string;
@@ -39,26 +46,59 @@ export const useGoogleDrivePicker = create<State>((set, get) => ({
 export default function DriveFolderPickerModalRoot() {
   const token = useGoogleDrivePicker((s) => s.token);
   const close = useGoogleDrivePicker((s) => s.close);
+  const { width, height } = useWindowDimensions();
 
   if (!token) return null;
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 50 }}>
+    <View
+      style={{
+        flex: 1,
+        paddingTop: 50,
+        width: width,
+        height: height,
+        bottom: 0,
+        position: 'absolute',
+      }}
+    >
       <View
         style={{
-          padding: 15,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          backgroundColor: 'black',
+          opacity: 0.4,
+          width: width,
+          height: height,
+          position: 'absolute',
+        }}
+      />
+      <View
+        style={{
+          backgroundColor: colors.card,
+          borderTopLeftRadius: 14,
+          borderTopRightRadius: 14,
+          width: width,
+          // height: height / 2,
+          position: 'absolute',
+          bottom: 0,
+          paddingBottom: 30,
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Selecciona una carpeta</Text>
-        <TouchableOpacity onPress={() => close('', '')}>
-          <Text style={{ color: 'red' }}>Cancelar</Text>
-        </TouchableOpacity>
-      </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            paddingVertical: 14,
+            justifyContent: 'space-between',
+          }}
+        >
+          <SText style={{ fontWeight: 600, fontSize: 20 }}>Cloud Folders</SText>
+          <Pressable onPress={() => close('', '')}>
+            <CloseIcon size="28px" color={colors.onCard} />
+          </Pressable>
+        </View>
 
-      <DriveFolderList token={token} onSelect={(id, name) => close(id, name)} />
+        <DriveFolderList token={token} onSelect={(id, name) => close(id, name)} />
+      </View>
     </View>
   );
 }
@@ -86,7 +126,6 @@ function DriveFolderList({ token, onSelect }: Props) {
   const fetchFolders = useCallback(async () => {
     try {
       setLoading(true);
-      // Filtramos por carpetas que no estén en la papelera
       const query = encodeURIComponent(
         "mimeType='application/vnd.google-apps.folder' and trashed=false and 'me' in owners"
       );
@@ -138,22 +177,19 @@ function DriveFolderList({ token, onSelect }: Props) {
   }
 
   return (
-    <FlatList
-      data={folders}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.listContent}
-      renderItem={({ item }) => (
-        <TouchableOpacity style={styles.folderItem} onPress={() => onSelect(item.id, item.name)}>
-          <Text style={styles.folderIcon}>📁</Text>
-          <Text style={styles.folderName} numberOfLines={1}>
-            {item.name}
-          </Text>
-        </TouchableOpacity>
-      )}
-      ListEmptyComponent={
-        <Text style={styles.emptyText}>No se encontraron carpetas en tu unidad.</Text>
-      }
-    />
+    <SColumn>
+      {folders.map((e, i) => (
+        <Pressable
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}
+          key={i}
+          onPress={() => onSelect(e.id, e.name)}
+        >
+          <FolderIcon size="24px" color={colors.onCard} />
+          <SText style={{ flex: 1, fontWeight: 500, fontSize: 16 }}>{e.name}</SText>
+          <ChevronRightIcon size="24px" color={colors.onCard} />
+        </Pressable>
+      ))}
+    </SColumn>
   );
 }
 
