@@ -63,7 +63,6 @@ export default function settings() {
        * TODO: Kepubify page
        * TODO: Queue page
        * TODO: Check pending files
-       * TODO: Delete files
        * TODO: Auto upload
        */}
     </View>

@@ -4,6 +4,7 @@ import { Cloud } from '../models/cloud';
 import { eReaderModel } from '../models/e-reader-model';
 import { Queue, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
+import { FilesystemService } from './filesystem-service';
 
 export class MangaConvertService {
   public static async convert(
@@ -55,6 +56,12 @@ export class MangaConvertService {
       const json = await response.json();
       if (!response.ok) {
         alert(json.error);
+      }
+
+      if (settings.deleteFilesAfterUpload) {
+        for (let path of paths) {
+          FilesystemService.deleteFile(path);
+        }
       }
 
       return {
