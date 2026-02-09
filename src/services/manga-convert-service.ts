@@ -58,7 +58,7 @@ export class MangaConvertService {
         alert(json.error);
       }
 
-      if (settings.deleteFilesAfterUpload) {
+      if (settings.deleteFilesAfterUpload && response.ok) {
         for (let path of paths) {
           FilesystemService.deleteFile(path);
         }
