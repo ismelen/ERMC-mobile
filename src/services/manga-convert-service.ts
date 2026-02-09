@@ -1,10 +1,14 @@
 import mime from 'mime';
 import { copyToCache } from '../../modules/file-handler';
 import { Cloud } from '../models/cloud';
+import { Queue, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
 
 export class MangaConvertService {
-  public static async convert(paths: string[], settings: UploadSettings) {
+  public static async convert(
+    paths: string[],
+    settings: UploadSettings
+  ): Promise<Queue | undefined> {
     try {
       const form = new FormData();
 
@@ -45,12 +49,22 @@ export class MangaConvertService {
         method: 'POST',
       });
 
-      
       const json = await response.json();
       if (!response.ok) {
         alert(json.error);
       }
-      console.log(json);
+
+      return {
+        sources: [],
+        settings: settings,
+        times: json.paths.map(
+          (e: any) =>
+            ({
+              path: e.path,
+              endTime: new Date(e.endTime),
+            }) as QueueTime
+        ),
+      };
     } catch (e) {
       const msg = (e as Error).message;
       alert(msg);

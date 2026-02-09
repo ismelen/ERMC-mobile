@@ -82,21 +82,6 @@ export class Cloud {
     return this.folderId!;
   }
 
-  // public toJSON(): Object {
-  //   return {
-  //     email: this.email,
-  //     folderName: this.folderName,
-  //     token: this.token
-  //       ? {
-  //           token: this.token.token,
-  //           refresh: this.token.refresh,
-  //           expirationDate: this.token.expirationDate?.toISOString(),
-  //         }
-  //       : undefined,
-  //     folderId: this.folderId,
-  //   };
-  // }
-
   private async updateFolderId(): Promise<boolean> {
     if (this.folderId) return true;
     if (!this.token?.token) return false;
@@ -129,7 +114,7 @@ export class Cloud {
       }
 
       this.token = await this.refreshToken();
-      return true;
+      return this.token !== undefined;
     }
 
     return await this.requestToken();
@@ -151,7 +136,7 @@ export class Cloud {
     });
 
     const tokens = await response.json();
-
+    console.log(tokens);
     if (tokens.error) return;
 
     const expiration = new Date();

@@ -1,4 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import ConvertLoading from '../../../src/components/convert-settings/convert-loading';
 import ConvertSettingsPage from '../../../src/components/convert-settings/convert-settings-page';
 import { useMonitoredFolders } from '../../../src/hooks/use-monitored-folders';
 import { Source } from '../../../src/models/source';
@@ -9,8 +11,9 @@ export default function index() {
   const { idx } = useLocalSearchParams();
   const updateFolderSettings = useMonitoredFolders((s) => s.updateFolderSettings);
   const deleteFolder = useMonitoredFolders((s) => s.deleteFolder);
+  const [loading, setLoading] = useState(false);
 
-  const sources: Source[] = [];
+  let sources: Source[] = [];
   let settings = UploadSettings.default('', '');
   const isMonitored = idx !== '-1';
 
@@ -21,12 +24,15 @@ export default function index() {
     settings = folder.settings;
   }
 
+  return <ConvertLoading />;
+  // if (loading) return <ConvertLoading />;
+
   return (
     <ConvertSettingsPage
       isMonitored={isMonitored}
       initSources={sources}
       settings={settings}
-      onProcess={(newSettings, newSources, isFilesMode) => {
+      onProcess={async (newSettings, newSources, isFilesMode) => {
         if (isMonitored) {
           if (newSources.length === 0) {
             deleteFolder(Number(idx));
@@ -41,14 +47,25 @@ export default function index() {
           return;
         }
 
+        sources = newSources;
+        settings = newSettings;
+
         let paths: string[] = [];
         if (isFilesMode) {
           paths = newSources.map((e) => e.path);
         } else {
           paths = newSources[0].children!;
         }
-        MangaConvertService.convert(paths, newSettings);
-        //TODO: Go to queue page
+
+        setLoading(true);
+        const queue = await MangaConvertService.convert(paths, newSettings);
+        setLoading(false);
+
+        if (!queue) return;
+
+        queue.sources = sources;
+
+        router.replace('/(tabs)/queue');
       }}
     />
   );

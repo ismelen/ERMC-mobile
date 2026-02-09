@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { AddCircleIcon } from '../../../old/src/theme/icons';
 import { Source } from '../../models/source';
 import { FilesystemService } from '../../services/filesystem-service';
 import { colors } from '../../theme/colors';
+import AddCircleIcon from '../icons/add-cirlce-icon';
 import DeleteForeverIcon from '../icons/delete-forever-icon';
 import DocsIcon from '../icons/docs-icon';
 import SColumn from '../shared/SColumn';
