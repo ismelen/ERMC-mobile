@@ -14,7 +14,8 @@ export class Cloud {
   private static _instance?: Cloud;
 
   constructor(
-    private email?: string,
+    public email?: string,
+    public folderName?: string,
     private token?: TokenData,
     private folderId?: string
   ) {}
@@ -31,13 +32,35 @@ export class Cloud {
     const data: Cloud = JSON.parse(json);
     this._instance = new Cloud(
       data.email,
+      data.folderName,
       {
         ...data.token,
-        expirationDate: data.token?.expirationDate ? new Date(data.token.expirationDate) : undefined
+        expirationDate: data.token?.expirationDate
+          ? new Date(data.token.expirationDate)
+          : undefined,
       },
       data.folderId
-    )
+    );
     return this._instance!;
+  }
+
+  public async setAccount() {
+    await this.requestToken();
+    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
+  }
+
+  public async setFolder() {
+    const json = JSON.stringify(this);
+    console.log(json);
+    if (!this.token?.token) {
+      alert('No account specified');
+      return;
+    }
+
+    const values = await this.requestFolder();
+    this.folderName = values?.name;
+    this.folderId = values?.id;
+    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
   }
 
   public async check(): Promise<boolean> {
@@ -59,14 +82,42 @@ export class Cloud {
     return this.folderId!;
   }
 
+  // public toJSON(): Object {
+  //   return {
+  //     email: this.email,
+  //     folderName: this.folderName,
+  //     token: this.token
+  //       ? {
+  //           token: this.token.token,
+  //           refresh: this.token.refresh,
+  //           expirationDate: this.token.expirationDate?.toISOString(),
+  //         }
+  //       : undefined,
+  //     folderId: this.folderId,
+  //   };
+  // }
+
   private async updateFolderId(): Promise<boolean> {
     if (this.folderId) return true;
     if (!this.token?.token) return false;
 
-    const folderId = await useGoogleDrivePicker.getState().show(this.token?.token);
-    this.folderId = folderId;
+    const values = await this.requestFolder();
 
-    return folderId !== undefined;
+    return values !== undefined;
+  }
+
+  private async requestFolder(): Promise<
+    | {
+        id: string;
+        name: string;
+      }
+    | undefined
+  > {
+    const values = await useGoogleDrivePicker.getState().show(this.token?.token!);
+    this.folderId = values?.id;
+    this.folderName = values?.name;
+
+    return values;
   }
 
   private async updateToken(): Promise<boolean> {

@@ -1,16 +1,16 @@
 import { router, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { AddCircleIcon } from '../old/src/theme/icons';
-import ActionButton from '../src/components/dashboard/action-button';
-import MonitoredFolderCard from '../src/components/dashboard/monitored-folder-card';
-import BookIcon from '../src/components/icons/book-icon';
-import ImageIcon from '../src/components/icons/image-icon';
-import SColumn from '../src/components/shared/SColumn';
-import SDivider from '../src/components/shared/SDivider';
-import SText from '../src/components/shared/SText';
-import { useMonitoredFolders } from '../src/hooks/use-monitored-folders';
-import { colors } from '../src/theme/colors';
+import ActionButton from '../../src/components/dashboard/action-button';
+import MonitoredFolderCard from '../../src/components/dashboard/monitored-folder-card';
+import AddCircleIcon from '../../src/components/icons/add-cirlce-icon';
+import BookIcon from '../../src/components/icons/book-icon';
+import ImageIcon from '../../src/components/icons/image-icon';
+import SColumn from '../../src/components/shared/SColumn';
+import SDivider from '../../src/components/shared/SDivider';
+import SText from '../../src/components/shared/SText';
+import { useMonitoredFolders } from '../../src/hooks/use-monitored-folders';
+import { colors } from '../../src/theme/colors';
 
 export default function index() {
   const fetchMonitoredFolders = useMonitoredFolders((s) => s.fetchMonitoredFolders);

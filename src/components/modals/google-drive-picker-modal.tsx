@@ -11,23 +11,28 @@ import { create } from 'zustand';
 
 interface State {
   token?: string;
-  resolver?: (folderId?: string) => void;
-  close(folderId: string): void;
-  show(token: string): Promise<string | undefined>;
+  resolver?: (value?: { id: string; name: string }) => void;
+  close(folderId: string, folderName: string): void;
+  show(token: string): Promise<{ id: string; name: string } | undefined>;
 }
 
 export const useGoogleDrivePicker = create<State>((set, get) => ({
-  show(token: string): Promise<string | undefined> {
-    return new Promise((resolve) => {
+  show(token: string): Promise<{ id: string; name: string } | undefined> {
+    return new Promise<{ id: string; name: string } | undefined>((resolve) => {
       set({ token: token, resolver: resolve });
     });
   },
 
-  close(folderId: string) {
+  close(folderId: string, folderName: string) {
     const { resolver } = get();
     set({ token: undefined, resolver: undefined });
 
-    resolver?.(folderId);
+    if (!folderId || !folderName) {
+      resolver?.(undefined);
+      return;
+    }
+
+    resolver?.({ id: folderId, name: folderName });
   },
 }));
 
@@ -48,12 +53,12 @@ export default function DriveFolderPickerModalRoot() {
         }}
       >
         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Selecciona una carpeta</Text>
-        <TouchableOpacity onPress={() => close('')}>
+        <TouchableOpacity onPress={() => close('', '')}>
           <Text style={{ color: 'red' }}>Cancelar</Text>
         </TouchableOpacity>
       </View>
 
-      <DriveFolderList token={token} onSelect={(id) => close(id)} />
+      <DriveFolderList token={token} onSelect={(id, name) => close(id, name)} />
     </View>
   );
 }
@@ -70,7 +75,7 @@ export interface GoogleDriveResponse {
 }
 interface Props {
   token: string;
-  onSelect: (folderId: string) => void;
+  onSelect: (folderId: string, folderName: string) => void;
 }
 
 function DriveFolderList({ token, onSelect }: Props) {
@@ -138,7 +143,7 @@ function DriveFolderList({ token, onSelect }: Props) {
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContent}
       renderItem={({ item }) => (
-        <TouchableOpacity style={styles.folderItem} onPress={() => onSelect(item.id)}>
+        <TouchableOpacity style={styles.folderItem} onPress={() => onSelect(item.id, item.name)}>
           <Text style={styles.folderIcon}>📁</Text>
           <Text style={styles.folderName} numberOfLines={1}>
             {item.name}
