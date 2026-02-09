@@ -45,11 +45,11 @@ export class MangaConvertService {
         method: 'POST',
       });
 
-      if (!response.ok) {
-        alert(response.text);
-      }
-
+      
       const json = await response.json();
+      if (!response.ok) {
+        alert(json.error);
+      }
       console.log(json);
     } catch (e) {
       const msg = (e as Error).message;

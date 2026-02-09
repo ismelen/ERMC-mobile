@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import DriveFolderPickerModalRoot from '../src/components/modals/google-drive-picker-modal';
 import { colors } from '../src/theme/colors';
 
 export default function RootLayout() {
@@ -18,7 +19,7 @@ export default function RootLayout() {
           },
         }}
       />
-      {/* <DriveFolderPickerModalRoot /> */}
+      <DriveFolderPickerModalRoot />
     </GestureHandlerRootView>
   );
 }

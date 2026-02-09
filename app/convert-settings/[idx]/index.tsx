@@ -15,7 +15,8 @@ export default function index() {
   const isMonitored = idx !== '-1';
 
   if (isMonitored) {
-    const folder = useMonitoredFolders().folders[Number(idx)];
+    const folder = useMonitoredFolders.getState().folders[Number(idx)];
+    if (!folder) router.back();
     sources.push(folder.source);
     settings = folder.settings;
   }
@@ -35,18 +36,19 @@ export default function index() {
           updateFolderSettings(newSettings, Number(idx));
         }
 
-        if (sources.length === 0) {
+        if (newSources.length === 0) {
           alert('Nothing to upload!!');
           return;
         }
 
         let paths: string[] = [];
         if (isFilesMode) {
-          paths = sources.map((e) => e.path);
+          paths = newSources.map((e) => e.path);
         } else {
-          paths = sources[0].children!;
+          paths = newSources[0].children!;
         }
         MangaConvertService.convert(paths, newSettings);
+        //TODO: Go to queue page
       }}
     />
   );

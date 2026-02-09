@@ -24,19 +24,31 @@ export class Cloud {
     const json = await StorageService.GetSecureAsync(CLOUD);
 
     if (!json) {
-      return new Cloud();
+      this._instance = new Cloud();
+      return this._instance;
     }
 
-    return JSON.parse(json);
+    const data: Cloud = JSON.parse(json);
+    this._instance = new Cloud(
+      data.email,
+      {
+        ...data.token,
+        expirationDate: data.token?.expirationDate ? new Date(data.token.expirationDate) : undefined
+      },
+      data.folderId
+    )
+    return this._instance!;
   }
 
-  async check(): Promise<boolean> {
-    if ((await this.updateToken()) && (await this.updateFolderId())) {
-      StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
-      return true;
-    }
+  public async check(): Promise<boolean> {
+    const tokenUpdated = await this.updateToken();
+    if (!tokenUpdated) return false;
 
-    return false;
+    const folderUpdated = await this.updateFolderId();
+    if (!folderUpdated) return false;
+
+    StorageService.SetSecureAsymc(CLOUD, JSON.stringify(this));
+    return true;
   }
 
   getToken(): string {
@@ -58,10 +70,10 @@ export class Cloud {
   }
 
   private async updateToken(): Promise<boolean> {
-    const noew = new Date();
+    const now = new Date();
 
     if (this.token?.expirationDate) {
-      if (this.token.expirationDate.getTime() > noew.getTime()) {
+      if (this.token.expirationDate.getTime() > now.getTime()) {
         return true;
       }
 
@@ -69,11 +81,7 @@ export class Cloud {
       return true;
     }
 
-    if (!(await this.requestToken())) {
-      return false;
-    }
-
-    return true;
+    return await this.requestToken();
   }
 
   private async refreshToken(): Promise<TokenData | undefined> {
