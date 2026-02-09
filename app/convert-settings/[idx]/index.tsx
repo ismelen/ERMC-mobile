@@ -11,6 +11,7 @@ export default function index() {
   const { idx } = useLocalSearchParams();
   const updateFolder = useMonitoredFolders((s) => s.updateFolder);
   const deleteFolder = useMonitoredFolders((s) => s.deleteFolder);
+  const updateFolderSettings = useMonitoredFolders((s) => s.updateFolderSettings);
   const [loading, setLoading] = useState(false);
 
   let sources: Source[] = [];
