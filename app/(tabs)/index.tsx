@@ -57,7 +57,12 @@ export default function index() {
         />
         <View style={[styles.monitoredTitle]}>
           <SText style={[styles.title, { fontSize: 18 }]}>FOLDER MONITOR</SText>
-          <SText style={{ color: colors.onCard }}>LIVE</SText>
+          <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+            <View
+              style={{ backgroundColor: colors.onCard, width: 8, height: 8, borderRadius: 10 }}
+            />
+            <SText style={{ color: colors.onCard }}>LIVE</SText>
+          </View>
         </View>
 
         <SColumn
