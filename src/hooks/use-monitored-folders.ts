@@ -11,6 +11,7 @@ interface State {
   addFolder(): Promise<void>;
   deleteFolder(idx: number): Promise<void>;
   updateFolderSettings(settings: UploadSettings, idx: number): Promise<void>;
+  updateFolder(folder: MonitoredFolder, idx: number): Promise<void>;
 }
 
 const FOLDERS = 'folders_key';
@@ -21,6 +22,21 @@ export const useMonitoredFolders = create<State>((set, get) => ({
   async fetchMonitoredFolders() {
     const monitoredFolders = await StorageService.GetAsync<MonitoredFolder[]>(FOLDERS);
     if (!monitoredFolders) return;
+
+    for (let folder of monitoredFolders) {
+      const source = await FilesystemService.getMonitorizedFolder(folder.source.path);
+      if (!folder.uploaded || (folder.source.children?.length ?? 0) === 0) {
+        folder.source = source;
+        folder.uploaded = false;
+        continue;
+      }
+
+      const oldPaths = new Set(folder.source.children)
+
+      folder.source.children = source.children?.filter((path => !oldPaths.has(path)))
+    }
+
+    StorageService.SetAsync(FOLDERS, monitoredFolders)
 
     set({ folders: monitoredFolders });
   },
@@ -36,6 +52,7 @@ export const useMonitoredFolders = create<State>((set, get) => ({
       {
         source: folder,
         settings: settings,
+        uploaded: false,
       },
     ];
     set({ folders: newFolders });
@@ -57,4 +74,12 @@ export const useMonitoredFolders = create<State>((set, get) => ({
     set({ folders: [...folders] });
     StorageService.SetAsync(FOLDERS, folders);
   },
+
+  async updateFolder(folder: MonitoredFolder, idx: number) {
+    const folders = get().folders;
+    folders[idx] = folder;
+
+    set({folders: [...folders]})
+    StorageService.SetAsync(FOLDERS, folders)
+  }
 }));

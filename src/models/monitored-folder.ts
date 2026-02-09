@@ -4,4 +4,5 @@ import { UploadSettings } from './upload';
 export interface MonitoredFolder {
   source: Source;
   settings: UploadSettings;
+  uploaded: boolean;
 }

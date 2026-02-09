@@ -45,6 +45,7 @@ export class FilesystemService {
   static async deleteFile(path: string) {
     await FS.deleteAsync(path, { idempotent: true });
   }
+
   // static async readDirectory(folder: Source): Promise<Source> {
   //   const files = await FS.StorageAccessFramework.readDirectoryAsync(folder.path);
 
