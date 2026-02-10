@@ -1,3 +1,5 @@
+import Constants from 'expo-constants';
+
 export const eReaderProfiles: Record<string, string> = {
   K1: 'Kindle 1',
   K2: 'Kindle 2',
@@ -31,3 +33,7 @@ export const eReaderProfiles: Record<string, string> = {
   KoS: 'Kobo Sage',
   KoE: 'Kobo Elipsa',
 };
+
+export const WEB_CLIENT_ID = Constants.expoConfig!.extra!.webClientId;
+export const WEB_CLIENT_SECRET = Constants.expoConfig!.extra!.webClientSecret;
+export const BACKENDD_URL = Constants.expoConfig!.extra!.backendUrl;

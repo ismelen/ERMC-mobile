@@ -1,7 +1,10 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import Constants from 'expo-constants';
 import { StorageService } from './storage-service';
+import { WEB_CLIENT_ID, WEB_CLIENT_SECRET } from '../constants';
 
 const TOKEN_KEY = 'token';
+
 
 interface TokenData {
   token?: string;
@@ -43,12 +46,10 @@ export class AuthService {
 
   private async requestToken(): Promise<TokenData | undefined> {
     GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
       offlineAccess: true,
       scopes: [
         'https://www.googleapis.com/auth/drive',
-        // 'https://www.googleapis.com/auth/drive.file',
-        // 'https://www.googleapis.com/auth/drive.readonly',
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email',
         'openid',
@@ -74,8 +75,8 @@ export class AuthService {
       },
       body: new URLSearchParams({
         code: data.serverAuthCode,
-        client_id: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
-        client_secret: process.env.EXPO_PUBLIC_WEB_CLIENT_SECRET,
+        client_id: WEB_CLIENT_ID,
+        client_secret: WEB_CLIENT_SECRET,
         grant_type: 'authorization_code',
         redirect_uri: '',
       }).toString(),
@@ -100,7 +101,7 @@ export class AuthService {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+        client_id: WEB_CLIENT_ID,
         refresh_token: this.data.refresh,
         grant_type: 'refresh_token',
       }).toString(),

@@ -5,6 +5,7 @@ import { eReaderModel } from '../models/e-reader-model';
 import { QueueRequest, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
 import { FilesystemService } from './filesystem-service';
+import { BACKENDD_URL } from '../constants';
 
 export class MangaConvertService {
   public static async convert(
@@ -48,7 +49,7 @@ export class MangaConvertService {
         }
       }
 
-      const response = await fetch(`${process.env.EXPO_PUBLIC_CONVERTER_API_URL}/manga/convert`, {
+      const response = await fetch(`${BACKENDD_URL}/manga/convert`, {
         body: form,
         method: 'POST',
       });

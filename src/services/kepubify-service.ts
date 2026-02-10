@@ -5,6 +5,7 @@ import { QueueRequest, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
 import { DownloadService } from './download-service';
 import { FilesystemService } from './filesystem-service';
+import { BACKENDD_URL } from '../constants';
 
 export class KepubifyService {
   public static async convert(
@@ -39,7 +40,7 @@ export class KepubifyService {
         }
       }
 
-      const response = await fetch(`${process.env.EXPO_PUBLIC_CONVERTER_API_URL}/kepubify`, {
+      const response = await fetch(`${BACKENDD_URL}/kepubify`, {
         body: form,
         method: 'POST',
       });

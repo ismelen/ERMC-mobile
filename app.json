@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ERMC-front",
+    "name": "ERMC",
     "slug": "ERMC-front",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -25,9 +25,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.ismelen.ermc",
-      "permissions": [
-        "MANAGE_EXTERNAL_STORAGE"
-      ],
+      "permissions": ["MANAGE_EXTERNAL_STORAGE"],
       "googleServicesFile": "./google-services.json"
     },
     "web": {
