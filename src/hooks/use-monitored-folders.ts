@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { MonitoredFolder } from '../models/monitored-folder';
 import { UploadSettings } from '../models/upload';
 import { FilesystemService } from '../services/filesystem-service';
+import { KepubifyService } from '../services/kepubify-service';
 import { MangaConvertService } from '../services/manga-convert-service';
 import { StorageService } from '../services/storage-service';
 import { useQueue } from './use-queue';
@@ -46,7 +47,7 @@ export const useMonitoredFolders = create<State>((set, get) => ({
 
     set({ folders: monitoredFolders });
 
-    get().autoUpload()
+    get().autoUpload();
   },
 
   async addFolder() {
@@ -61,6 +62,7 @@ export const useMonitoredFolders = create<State>((set, get) => ({
         source: folder,
         settings: settings,
         uploaded: false,
+        kepubify: false,
       },
     ];
     set({ folders: newFolders });
@@ -97,6 +99,16 @@ export const useMonitoredFolders = create<State>((set, get) => ({
 
     for (let folder of folders) {
       if (!folder.settings.autoUpload) continue;
+      if (folder.kepubify) {
+        const request = await KepubifyService.convert(folder.source.children!, folder.settings);
+        if (!request) continue;
+        if (folder.settings.deleteFilesAfterUpload) {
+          folder.source.children = [];
+          folder.uploaded = true;
+        }
+        continue;
+      }
+
       const request = await MangaConvertService.convert(folder.source.children!, folder.settings);
       if (!request) continue;
       useQueue.getState().add(request);

@@ -43,7 +43,7 @@ export default function index() {
           icon={(size, color) => <ImageIcon size={size} color={color} />}
           onPress={() =>
             router.push({
-              pathname: '/convert-settings/[idx]',
+              pathname: '/convert-settings/[idx]/[kepubify]',
               params: {
                 idx: -1,
               },
@@ -53,7 +53,15 @@ export default function index() {
         <ActionButton
           text="Kepubify"
           icon={(size, color) => <BookIcon size={size} color={color} />}
-          onPress={() => {}} //TODO: Kepubify
+          onPress={() =>
+            router.push({
+              pathname: '/convert-settings/[idx]/[kepubify]',
+              params: {
+                idx: -1,
+                kepubify: true.toString(),
+              },
+            })
+          }
         />
         <View style={[styles.monitoredTitle]}>
           <SText style={[styles.title, { fontSize: 18 }]}>FOLDER MONITOR</SText>
@@ -81,7 +89,7 @@ export default function index() {
               folder={e}
               onPress={() =>
                 router.push({
-                  pathname: '/convert-settings/[idx]',
+                  pathname: '/convert-settings/[idx]/[kepubify]',
                   params: {
                     idx: i,
                   },

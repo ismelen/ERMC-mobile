@@ -9,7 +9,6 @@ import SButton from '../shared/SButton';
 import SColumn from '../shared/SColumn';
 import SDivider from '../shared/SDivider';
 import SText from '../shared/SText';
-import STextField from '../shared/STextField';
 import CloudField from './cloud-field';
 import ConfigFilesList from './config-files-list';
 import ConfigFolderCard from './config-folder-card';
@@ -23,7 +22,7 @@ interface Props {
   onProcess(settings: UploadSettings, sources: Source[], filesMode: boolean): void;
 }
 
-export default function ConvertSettingsPage({
+export default function KepubifySettingsPage({
   isMonitored,
   initSources,
   settings,
@@ -68,56 +67,9 @@ export default function ConvertSettingsPage({
             isMonitorized={isMonitored}
           />
         )}
-        <SText style={styles.sectionTitle}>METADATA</SText>
-        <SColumn removeCellPadding>
-          <STextField
-            label="Title"
-            hint="Book Title"
-            initial={settings.title}
-            labelWidth={60}
-            onChange={(value) => {
-              settings.title = value;
-            }}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 3,
-            }}
-          />
-          <STextField
-            label="Author"
-            hint="Author Name"
-            initial={settings.author}
-            labelWidth={60}
-            onChange={(value) => {
-              settings.author = value;
-            }}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 3,
-            }}
-          />
-        </SColumn>
+
         <SText style={styles.sectionTitle}>CONFIGURATION</SText>
         <SColumn removeCellPadding>
-          <STextField
-            label="Intial Volume"
-            hint="1"
-            initial={settings.author}
-            onChange={(value) => {
-              settings.author = value;
-            }}
-            style={{
-              paddingHorizontal: 16,
-              paddingVertical: 3,
-            }}
-            textAlign="right"
-            keyboardType="number-pad"
-          />
-          <ConfigToggleField
-            initial={settings.mergeFiles}
-            label="Merge Files"
-            onChange={(value) => (settings.mergeFiles = value)}
-          />
           <ConfigToggleField
             initial={settings.deleteFilesAfterUpload}
             label="Delete files after upload"

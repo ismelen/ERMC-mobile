@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { useWindowDimensions, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ConvertLoading from '../src/components/convert-settings/convert-loading';
 import EReaderProfilePickerModalRoot from '../src/components/modals/e-reader-profile-picker-modal';
@@ -10,9 +11,8 @@ import { colors } from '../src/theme/colors';
 
 export default function RootLayout() {
   const loading = useMonitoredFolders((s) => s.loading);
+  const { width, height } = useWindowDimensions();
 
-  if (loading) return <ConvertLoading />;
-  
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="dark" backgroundColor={colors.background} />
@@ -30,6 +30,11 @@ export default function RootLayout() {
       />
       <DriveFolderPickerModalRoot />
       <EReaderProfilePickerModalRoot />
+      {loading && (
+        <View style={{ width: width, height: height, position: 'absolute' }}>
+          <ConvertLoading />
+        </View>
+      )}
     </GestureHandlerRootView>
   );
 }
