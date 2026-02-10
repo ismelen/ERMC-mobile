@@ -14,7 +14,7 @@ interface State {
   fetchMonitoredFolders(): Promise<void>;
   addFolder(): Promise<void>;
   deleteFolder(idx: number): Promise<void>;
-  updateFolderSettings(settings: UploadSettings, idx: number): Promise<void>;
+  updateFolderSettings(settings: UploadSettings, kepubify: boolean, idx: number): Promise<void>;
   updateFolder(folder: MonitoredFolder, idx: number): Promise<void>;
   autoUpload(): Promise<void>;
 }
@@ -77,9 +77,10 @@ export const useMonitoredFolders = create<State>((set, get) => ({
     StorageService.SetAsync(FOLDERS, folders);
   },
 
-  async updateFolderSettings(settings: UploadSettings, idx: number) {
+  async updateFolderSettings(settings: UploadSettings, kepubify: boolean, idx: number) {
     const folders = get().folders;
     folders[idx].settings = settings;
+    folders[idx].kepubify = kepubify;
 
     set({ folders: [...folders] });
     StorageService.SetAsync(FOLDERS, folders);

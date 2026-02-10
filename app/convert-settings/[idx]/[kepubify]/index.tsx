@@ -42,7 +42,7 @@ export default function index() {
       router.back();
       return;
     }
-    updateFolderSettings(newSettings, Number(idx));
+    updateFolderSettings(newSettings, kepubifyVal, Number(idx));
     router.back();
   };
 
