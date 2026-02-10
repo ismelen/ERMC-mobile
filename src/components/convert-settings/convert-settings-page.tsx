@@ -20,6 +20,7 @@ interface Props {
   isMonitored: boolean;
   initSources: Source[];
   settings: UploadSettings;
+  onSaveSettings(settings: UploadSettings, sources: Source[]): void;
   onProcess(settings: UploadSettings, sources: Source[], filesMode: boolean): void;
 }
 
@@ -28,13 +29,14 @@ export default function ConvertSettingsPage({
   initSources,
   settings,
   onProcess,
+  onSaveSettings,
 }: Props) {
   const [filesMode, setFilesMode] = useState(!isMonitored);
   const [sources, setSources] = useState<Source[]>(initSources);
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 0 }}>
+      <ScrollView style={{ paddingHorizontal: 20 }}>
         <SText style={styles.sectionTitle}>SOURCE</SText>
         {sources.length === 0 && (
           <FilesOrFolderSelector
@@ -132,14 +134,25 @@ export default function ConvertSettingsPage({
             />
           )}
         </SColumn>
+        <View style={{ height: 30 }} />
       </ScrollView>
       <SDivider />
-      <SButton
-        onPress={() => onProcess(settings, sources, filesMode)}
-        style={{ marginVertical: 20, marginHorizontal: 20 }}
-      >
-        <SText style={{ fontSize: 18, fontWeight: '700' }}>Start Processing</SText>
-      </SButton>
+      <View style={{ paddingVertical: 20, gap: 20 }}>
+        {isMonitored && (
+          <SButton
+            onPress={() => onSaveSettings(settings, sources)}
+            style={{ marginHorizontal: 20, backgroundColor: colors.card }}
+          >
+            <SText style={{ fontSize: 18, fontWeight: '700' }}>Save settings</SText>
+          </SButton>
+        )}
+        <SButton
+          onPress={() => onProcess(settings, sources, filesMode)}
+          style={{ marginHorizontal: 20 }}
+        >
+          <SText style={{ fontSize: 18, fontWeight: '700' }}>Start Processing</SText>
+        </SButton>
+      </View>
     </View>
   );
 }

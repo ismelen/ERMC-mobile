@@ -5,6 +5,7 @@ import ConfigToggleField from '../../../../src/components/convert-settings/confi
 import ConvertLoading from '../../../../src/components/convert-settings/convert-loading';
 import ConvertSettingsPage from '../../../../src/components/convert-settings/convert-settings-page';
 import KepubifySettingsPage from '../../../../src/components/convert-settings/kepubify-settings-page';
+import SDivider from '../../../../src/components/shared/SDivider';
 import { useMonitoredFolders } from '../../../../src/hooks/use-monitored-folders';
 import { useQueue } from '../../../../src/hooks/use-queue';
 import { QueueRequest } from '../../../../src/models/queue';
@@ -35,6 +36,16 @@ export default function index() {
     kepubify = folder.kepubify.toString();
   }
 
+  const handleSaveSettings = (newSettings: UploadSettings, newSources: Source[]) => {
+    if (newSources.length === 0) {
+      deleteFolder(Number(idx));
+      router.back();
+      return;
+    }
+    updateFolderSettings(newSettings, Number(idx));
+    router.back();
+  };
+
   const handleProcess = async (
     newSettings: UploadSettings,
     newSources: Source[],
@@ -42,12 +53,7 @@ export default function index() {
     convert: (paths: string[], settings: UploadSettings) => Promise<QueueRequest | undefined>
   ) => {
     if (isMonitored) {
-      if (newSources.length === 0) {
-        deleteFolder(Number(idx));
-        router.back();
-        return;
-      }
-      updateFolderSettings(newSettings, Number(idx));
+      handleSaveSettings(newSettings, newSources);
     }
 
     if (newSources.length === 0) {
@@ -126,7 +132,7 @@ export default function index() {
           borderRadius: 14,
           backgroundColor: colors.card,
           marginHorizontal: 20,
-          marginTop: 10,
+          marginVertical: 10,
         }}
       >
         <ConfigToggleField
@@ -135,6 +141,7 @@ export default function index() {
           onChange={(value) => setKepubifyVal(value)}
         />
       </View>
+      <SDivider />
       {kepubifyVal && (
         <KepubifySettingsPage
           isMonitored={isMonitored}
@@ -143,6 +150,7 @@ export default function index() {
           onProcess={async (newSettings, newSources, isFilesMode) => {
             handleProcess(newSettings, newSources, isFilesMode, KepubifyService.convert);
           }}
+          onSaveSettings={handleSaveSettings}
         />
       )}
       {!kepubifyVal && (
@@ -153,6 +161,7 @@ export default function index() {
           onProcess={async (newSettings, newSources, isFilesMode) => {
             handleProcess(newSettings, newSources, isFilesMode, MangaConvertService.convert);
           }}
+          onSaveSettings={handleSaveSettings}
         />
       )}
     </View>
