@@ -58,19 +58,19 @@ export default function index() {
         }
 
         setLoading(true);
-        const queue = await MangaConvertService.convert(paths, newSettings);
+        const request = await MangaConvertService.convert(paths, newSettings);
         setLoading(false);
 
-        if (!queue) return;
+        if (!request) return;
 
-        queue.sources = sources;
+        request.sources = sources;
         if (isMonitored) {
-          settings.initialVolume! += queue.times.length;
+          settings.initialVolume! += request.times.length;
           updateFolder(
             {
               source: {
                 ...newSources[0],
-                children: [],
+                children: settings.deleteFilesAfterUpload ? [] : newSources[0].children,
               },
               settings: settings,
               uploaded: true,

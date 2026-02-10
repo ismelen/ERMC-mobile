@@ -62,7 +62,6 @@ export default function settings() {
       {/*
        * TODO: Kepubify page
        * TODO: Queue page
-       * TODO: Auto upload
        */}
     </View>
   );

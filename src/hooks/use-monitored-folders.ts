@@ -3,21 +3,25 @@ import { create } from 'zustand';
 import { MonitoredFolder } from '../models/monitored-folder';
 import { UploadSettings } from '../models/upload';
 import { FilesystemService } from '../services/filesystem-service';
+import { MangaConvertService } from '../services/manga-convert-service';
 import { StorageService } from '../services/storage-service';
 
 interface State {
   folders: MonitoredFolder[];
+  loading: boolean;
   fetchMonitoredFolders(): Promise<void>;
   addFolder(): Promise<void>;
   deleteFolder(idx: number): Promise<void>;
   updateFolderSettings(settings: UploadSettings, idx: number): Promise<void>;
   updateFolder(folder: MonitoredFolder, idx: number): Promise<void>;
+  autoUpload(): Promise<void>;
 }
 
 const FOLDERS = 'folders_key';
 
 export const useMonitoredFolders = create<State>((set, get) => ({
   folders: [],
+  loading: false,
 
   async fetchMonitoredFolders() {
     const monitoredFolders = await StorageService.GetAsync<MonitoredFolder[]>(FOLDERS);
@@ -31,12 +35,12 @@ export const useMonitoredFolders = create<State>((set, get) => ({
         continue;
       }
 
-      const oldPaths = new Set(folder.source.children)
+      const oldPaths = new Set(folder.source.children);
 
-      folder.source.children = source.children?.filter((path => !oldPaths.has(path)))
+      folder.source.children = source.children?.filter((path) => !oldPaths.has(path));
     }
 
-    StorageService.SetAsync(FOLDERS, monitoredFolders)
+    StorageService.SetAsync(FOLDERS, monitoredFolders);
 
     set({ folders: monitoredFolders });
   },
@@ -79,7 +83,31 @@ export const useMonitoredFolders = create<State>((set, get) => ({
     const folders = get().folders;
     folders[idx] = folder;
 
-    set({folders: [...folders]})
-    StorageService.SetAsync(FOLDERS, folders)
-  }
+    set({ folders: [...folders] });
+    StorageService.SetAsync(FOLDERS, folders);
+  },
+
+  async autoUpload() {
+    const folders = get().folders;
+    set({ loading: true });
+
+    for (let folder of folders) {
+      if (!folder.settings.autoUpload) continue;
+      const request = await MangaConvertService.convert(folder.source.children!, folder.settings);
+      if (!request) continue;
+
+      folder.settings.initialVolume! += request?.times.length;
+      if (folder.settings.deleteFilesAfterUpload) {
+        folder.source.children = [];
+      }
+      folder.uploaded = true;
+    }
+
+    await StorageService.SetAsync(FOLDERS, folders);
+
+    set({ loading: false, folders: [...folders] });
+  },
 }));
+
+
+
