@@ -1,5 +1,5 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import ConfigToggleField from '../../../../src/components/convert-settings/config-toogle-field';
 import ConvertLoading from '../../../../src/components/convert-settings/convert-loading';
@@ -36,6 +36,12 @@ export default function index() {
     kepubify = folder.kepubify.toString();
   }
 
+  useEffect(() => {
+    if (isMonitored) {
+      setKepubifyVal(kepubify === true.toString());
+    }
+  }, []);
+
   const handleSaveSettings = (newSettings: UploadSettings, newSources: Source[]) => {
     if (newSources.length === 0) {
       deleteFolder(Number(idx));
@@ -43,7 +49,6 @@ export default function index() {
       return;
     }
     updateFolderSettings(newSettings, kepubifyVal, Number(idx));
-    router.back();
   };
 
   const handleProcess = async (
@@ -98,7 +103,7 @@ export default function index() {
         handleUpdateFolder();
       }
 
-      router.replace('/(tabs)/home');
+      router.replace('/(tabs)');
       return;
     }
 
@@ -136,7 +141,7 @@ export default function index() {
         }}
       >
         <ConfigToggleField
-          initial={kepubifyVal}
+          initial={kepubify === true.toString()}
           label="Kepubify"
           onChange={(value) => setKepubifyVal(value)}
         />
@@ -150,7 +155,10 @@ export default function index() {
           onProcess={async (newSettings, newSources, isFilesMode) => {
             handleProcess(newSettings, newSources, isFilesMode, KepubifyService.convert);
           }}
-          onSaveSettings={handleSaveSettings}
+          onSaveSettings={(newSettings, newSources) => {
+            handleSaveSettings(newSettings, newSources);
+            router.back();
+          }}
         />
       )}
       {!kepubifyVal && (
@@ -161,7 +169,10 @@ export default function index() {
           onProcess={async (newSettings, newSources, isFilesMode) => {
             handleProcess(newSettings, newSources, isFilesMode, MangaConvertService.convert);
           }}
-          onSaveSettings={handleSaveSettings}
+          onSaveSettings={(newSettings, newSources) => {
+            handleSaveSettings(newSettings, newSources);
+            router.back();
+          }}
         />
       )}
     </View>

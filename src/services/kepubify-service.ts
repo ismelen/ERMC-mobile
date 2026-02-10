@@ -45,8 +45,10 @@ export class KepubifyService {
       });
 
       const json = await response.json();
+      console.log(json);
       if (!response.ok) {
         alert(json.error);
+        return;
       }
 
       if (settings.deleteFilesAfterUpload && response.ok) {
