@@ -1,5 +1,6 @@
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleDrivePicker } from '../components/modals/google-drive-picker-modal';
+import { WEB_CLIENT_ID, WEB_CLIENT_SECRET } from '../constants';
 import { StorageService } from '../services/storage-service';
 
 const CLOUD = 'cloud_key';
@@ -129,7 +130,7 @@ export class Cloud {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        client_id: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+        client_id: WEB_CLIENT_ID,
         refresh_token: this.token.refresh,
         grant_type: 'refresh_token',
       }).toString(),
@@ -151,7 +152,7 @@ export class Cloud {
 
   private async requestToken(): Promise<boolean> {
     GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
       offlineAccess: true,
       scopes: [
         'https://www.googleapis.com/auth/drive',
@@ -176,8 +177,8 @@ export class Cloud {
       },
       body: new URLSearchParams({
         code: data.serverAuthCode,
-        client_id: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
-        client_secret: process.env.EXPO_PUBLIC_WEB_CLIENT_SECRET,
+        client_id: WEB_CLIENT_ID,
+        client_secret: WEB_CLIENT_SECRET,
         grant_type: 'authorization_code',
         redirect_uri: '',
       }).toString(),
