@@ -2,7 +2,7 @@ import mime from 'mime';
 import { copyToCache } from '../../modules/file-handler';
 import { Cloud } from '../models/cloud';
 import { eReaderModel } from '../models/e-reader-model';
-import { Queue, QueueTime } from '../models/queue';
+import { QueueRequest, QueueTime } from '../models/queue';
 import { UploadSettings } from '../models/upload';
 import { FilesystemService } from './filesystem-service';
 
@@ -10,7 +10,7 @@ export class MangaConvertService {
   public static async convert(
     paths: string[],
     settings: UploadSettings
-  ): Promise<Queue | undefined> {
+  ): Promise<QueueRequest | undefined> {
     try {
       const form = new FormData();
 

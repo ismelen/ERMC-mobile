@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ConvertLoading from '../../../src/components/convert-settings/convert-loading';
 import ConvertSettingsPage from '../../../src/components/convert-settings/convert-settings-page';
 import { useMonitoredFolders } from '../../../src/hooks/use-monitored-folders';
+import { useQueue } from '../../../src/hooks/use-queue';
 import { Source } from '../../../src/models/source';
 import { UploadSettings } from '../../../src/models/upload';
 import { MangaConvertService } from '../../../src/services/manga-convert-service';
@@ -79,6 +80,7 @@ export default function index() {
           );
         }
 
+        useQueue.getState().add(request);
         router.replace('/(tabs)/queue');
       }}
     />

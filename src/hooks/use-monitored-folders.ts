@@ -5,6 +5,7 @@ import { UploadSettings } from '../models/upload';
 import { FilesystemService } from '../services/filesystem-service';
 import { MangaConvertService } from '../services/manga-convert-service';
 import { StorageService } from '../services/storage-service';
+import { useQueue } from './use-queue';
 
 interface State {
   folders: MonitoredFolder[];
@@ -27,6 +28,7 @@ export const useMonitoredFolders = create<State>((set, get) => ({
     const monitoredFolders = await StorageService.GetAsync<MonitoredFolder[]>(FOLDERS);
     if (!monitoredFolders) return;
 
+    // TODO: Check, add lastUpdatedChildrens ??
     for (let folder of monitoredFolders) {
       const source = await FilesystemService.getMonitorizedFolder(folder.source.path);
       if (!folder.uploaded || (folder.source.children?.length ?? 0) === 0) {
@@ -43,6 +45,8 @@ export const useMonitoredFolders = create<State>((set, get) => ({
     StorageService.SetAsync(FOLDERS, monitoredFolders);
 
     set({ folders: monitoredFolders });
+
+    get().autoUpload()
   },
 
   async addFolder() {
@@ -95,6 +99,7 @@ export const useMonitoredFolders = create<State>((set, get) => ({
       if (!folder.settings.autoUpload) continue;
       const request = await MangaConvertService.convert(folder.source.children!, folder.settings);
       if (!request) continue;
+      useQueue.getState().add(request);
 
       folder.settings.initialVolume! += request?.times.length;
       if (folder.settings.deleteFilesAfterUpload) {

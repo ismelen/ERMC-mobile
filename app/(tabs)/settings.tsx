@@ -61,7 +61,6 @@ export default function settings() {
       </SColumn>
       {/*
        * TODO: Kepubify page
-       * TODO: Queue page
        */}
     </View>
   );

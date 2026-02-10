@@ -1,7 +1,7 @@
 import { Source } from './source';
 import { UploadSettings } from './upload';
 
-export interface Queue {
+export interface QueueRequest {
   sources: Source[];
   settings: UploadSettings;
   times: QueueTime[];
@@ -9,5 +9,5 @@ export interface Queue {
 
 export interface QueueTime {
   path: string;
-  endTime: Date;
+  endTime?: Date;
 }
