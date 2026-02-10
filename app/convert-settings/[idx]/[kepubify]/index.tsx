@@ -71,20 +71,25 @@ export default function index() {
 
     if (!request) return;
 
+    const handleUpdateFolder = () => {
+      updateFolder(
+        {
+          source: {
+            ...newSources[0],
+            children: settings.deleteFilesAfterUpload ? [] : newSources[0].children,
+          },
+          settings: settings,
+          uploaded: true,
+          kepubify: kepubifyVal,
+          lastUploadedPahts: paths,
+        },
+        Number(idx)
+      );
+    };
+
     if (kepubifyVal) {
       if (isMonitored) {
-        updateFolder(
-          {
-            source: {
-              ...newSources[0],
-              children: settings.deleteFilesAfterUpload ? [] : newSources[0].children,
-            },
-            settings: settings,
-            uploaded: true,
-            kepubify: true,
-          },
-          Number(idx)
-        );
+        handleUpdateFolder();
       }
 
       router.replace('/(tabs)/home');
@@ -94,18 +99,7 @@ export default function index() {
     request.sources = sources;
     if (isMonitored) {
       settings.initialVolume! += request.times.length;
-      updateFolder(
-        {
-          source: {
-            ...newSources[0],
-            children: settings.deleteFilesAfterUpload ? [] : newSources[0].children,
-          },
-          settings: settings,
-          uploaded: true,
-          kepubify: false,
-        },
-        Number(idx)
-      );
+      handleUpdateFolder();
     }
 
     useQueue.getState().add(request);

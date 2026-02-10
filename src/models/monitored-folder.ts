@@ -6,4 +6,5 @@ export interface MonitoredFolder {
   settings: UploadSettings;
   uploaded: boolean;
   kepubify: boolean;
+  lastUploadedPahts: string[];
 }

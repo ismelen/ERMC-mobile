@@ -38,9 +38,8 @@ export const useMonitoredFolders = create<State>((set, get) => ({
         continue;
       }
 
-      const oldPaths = new Set(folder.source.children);
-
-      folder.source.children = source.children?.filter((path) => !oldPaths.has(path));
+      const lastUpdatePaths = new Set(folder.lastUploadedPahts);
+      folder.source.children = source.children?.filter((path) => !lastUpdatePaths.has(path));
     }
 
     StorageService.SetAsync(FOLDERS, monitoredFolders);
@@ -63,7 +62,8 @@ export const useMonitoredFolders = create<State>((set, get) => ({
         settings: settings,
         uploaded: false,
         kepubify: false,
-      },
+        lastUploadedPahts: [],
+      } as MonitoredFolder,
     ];
     set({ folders: newFolders });
     StorageService.SetAsync(FOLDERS, newFolders);
